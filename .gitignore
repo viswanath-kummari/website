@@ -40,6 +40,12 @@ ENV/
 .DS_Store
 Thumbs.db
 
-
+<<<<<<< HEAD
+# Vercel
 .vercel
-.env*
+
+# Environment files
+.env
+.env.local
+.env.*
+!.env.example

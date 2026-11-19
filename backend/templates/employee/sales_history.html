@@ -1,0 +1,78 @@
+{% extends 'employee/layout.html' %}
+
+{% block title %}My Sales History | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">My Billing History</h1>
+    <p class="text-muted mb-0">Records of bills processed by you.</p>
+  </div>
+  <a href="{{ url_for('employee.pos_billing') }}" class="btn btn-primary-fc">
+    <i class="bi bi-calculator me-1"></i> New Bill
+  </a>
+</div>
+
+<div class="fc-card p-4 mb-4">
+  <form method="GET" action="{{ url_for('employee.sales_history') }}" class="row g-2 align-items-center">
+    <div class="col-md-9">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+        <input type="text" name="search" class="form-control border-start-0" placeholder="Search by invoice number or customer phone..." value="{{ request.args.get('search', '') }}">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-charcoal w-100">Search Invoices</button>
+    </div>
+  </form>
+</div>
+
+{% if sales %}
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Invoice #</th>
+        <th>Date & Time</th>
+        <th>Customer</th>
+        <th>Items</th>
+        <th>Payment</th>
+        <th>Amount</th>
+        <th>Receipt</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sales %}
+      <tr>
+        <td class="fw-bold font-monospace text-orange">{{ s.invoice_number }}</td>
+        <td class="small">{{ s.created_at|string }}</td>
+        <td>
+          <div class="fw-bold">{{ s.customer_name or 'Counter Walk-in' }}</div>
+          <small class="text-muted">{{ s.customer_phone or '' }}</small>
+        </td>
+        <td>{{ s.total_items }} items</td>
+        <td><span class="badge bg-light text-dark border">{{ s.payment_method }}</span></td>
+        <td class="fw-bold fs-6">{{ s.grand_total|currency }}</td>
+        <td>
+          <div class="d-flex gap-1">
+            <a href="{{ url_for('admin.print_invoice', invoice_number=s.invoice_number) }}" target="_blank" class="btn btn-sm btn-outline-fc" title="Print Receipt">
+              <i class="bi bi-printer"></i>
+            </a>
+            <a href="{{ url_for('admin.download_invoice_pdf', invoice_number=s.invoice_number) }}" class="btn btn-sm btn-outline-fc" title="Download PDF">
+              <i class="bi bi-file-earmark-pdf"></i>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="fc-card p-5 text-center">
+  <i class="bi bi-receipt display-4 text-muted mb-2 d-block"></i>
+  <h4 class="fw-bold text-charcoal">No Sales Records Found</h4>
+  <p class="text-muted">Start creating bills at the POS counter.</p>
+</div>
+{% endif %}
+{% endblock %}

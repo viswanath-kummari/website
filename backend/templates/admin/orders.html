@@ -1,0 +1,93 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Online Pickup Orders | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Online Pickup Orders</h1>
+    <p class="text-muted mb-0">Incoming storefront orders scheduled for customer counter pickup.</p>
+  </div>
+</div>
+
+<!-- Status Filters -->
+<div class="fc-card p-3 mb-4">
+  <div class="d-flex flex-wrap gap-2">
+    {% for st in ['All', 'Pending', 'Accepted', 'Ready for Collection', 'Completed', 'Cancelled'] %}
+    <a href="{{ url_for('admin.online_orders', status=st) }}" 
+       class="btn btn-sm {% if active_status == st %}btn-primary-fc{% else %}btn-outline-fc{% endif %} px-3 py-1 rounded-pill">
+      {{ st }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+{% if orders %}
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Order Number</th>
+        <th>Customer</th>
+        <th>Contact Phone</th>
+        <th>Scheduled Pickup</th>
+        <th>Items</th>
+        <th>Amount</th>
+        <th>Payment</th>
+        <th>Status</th>
+        <th>Manage Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ord in orders %}
+      <tr>
+        <td class="fw-bold font-monospace text-orange">{{ ord.order_number }}</td>
+        <td class="fw-bold text-charcoal">
+          {{ ord.customer_name }}
+          {% if ord.notes %}<br><small class="text-muted fw-normal"><i class="bi bi-chat-left-text me-1"></i> {{ ord.notes }}</small>{% endif %}
+        </td>
+        <td>{{ ord.customer_phone }}</td>
+        <td class="small">{{ ord.pickup_time }}</td>
+        <td><span class="badge bg-light text-dark border">{{ ord.total_items }} items</span></td>
+        <td class="fw-bold text-charcoal fs-6">{{ ord.grand_total|currency }}</td>
+        <td><span class="badge bg-secondary">{{ ord.payment_method }}</span></td>
+        <td>
+          {% if ord.status == 'Pending' %}
+            <span class="badge-status status-pending"><i class="bi bi-hourglass-split"></i> Pending</span>
+          {% elif ord.status == 'Accepted' %}
+            <span class="badge-status status-accepted"><i class="bi bi-check2"></i> Packing</span>
+          {% elif ord.status == 'Ready for Collection' %}
+            <span class="badge-status status-ready"><i class="bi bi-bag-check"></i> Ready</span>
+          {% elif ord.status == 'Completed' %}
+            <span class="badge-status status-completed"><i class="bi bi-check-circle-fill"></i> Completed</span>
+          {% else %}
+            <span class="badge-status status-cancelled"><i class="bi bi-x-circle"></i> Cancelled</span>
+          {% endif %}
+        </td>
+        <td>
+          <form method="POST" action="{{ url_for('admin.update_order', order_id=ord.id) }}" class="d-flex gap-1">
+            <select name="status" class="form-select form-select-sm" style="width: 140px;">
+              <option value="Pending" {% if ord.status == 'Pending' %}selected{% endif %}>Pending</option>
+              <option value="Accepted" {% if ord.status == 'Accepted' %}selected{% endif %}>Accepted</option>
+              <option value="Ready for Collection" {% if ord.status == 'Ready for Collection' %}selected{% endif %}>Ready</option>
+              <option value="Completed" {% if ord.status == 'Completed' %}selected{% endif %}>Completed</option>
+              <option value="Cancelled" {% if ord.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary-fc py-1 px-2" title="Save Status">
+              <i class="bi bi-check-lg"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="fc-card p-5 text-center">
+  <i class="bi bi-bag-check display-4 text-muted mb-2 d-block"></i>
+  <h4 class="fw-bold text-charcoal">No Pickup Orders Found</h4>
+  <p class="text-muted">No orders match the selected status filter.</p>
+</div>
+{% endif %}
+{% endblock %}

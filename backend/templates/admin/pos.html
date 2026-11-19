@@ -1,0 +1,163 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Owner POS Terminal | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="pos-wrapper">
+  <!-- Left Side: Product Search & Catalog -->
+  <div class="pos-catalog-panel">
+    <!-- Top Search & Categories -->
+    <div class="mb-3">
+      <div class="input-group mb-2">
+        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+        <input type="text" id="posSearchInput" class="form-control border-start-0" placeholder="Fast product search (press name to find)...">
+      </div>
+
+      <div class="d-flex flex-wrap gap-1">
+        <button class="btn btn-sm btn-charcoal pos-cat-filter active" data-category="All">All Categories</button>
+        <button class="btn btn-sm btn-outline-fc pos-cat-filter" data-category="Chicken Items">Chicken</button>
+        <button class="btn btn-sm btn-outline-fc pos-cat-filter" data-category="Mutton Items">Mutton</button>
+        <button class="btn btn-sm btn-outline-fc pos-cat-filter" data-category="Eggs">Eggs</button>
+        <button class="btn btn-sm btn-outline-fc pos-cat-filter" data-category="Fish Items">Fish & Seafood</button>
+      </div>
+    </div>
+
+    <!-- Product Catalog Grid -->
+    <div class="pos-items-scroll">
+      <div id="posProductGrid" class="row g-2">
+        <!-- Rendered dynamically by pos.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side: POS Bill / Cart Panel -->
+  <div class="pos-cart-panel">
+    <!-- Counter / Customer Details -->
+    <div class="pb-3 border-bottom mb-2">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="fw-bold fs-6 text-charcoal mb-0">POS Invoice Billing</h5>
+        <button id="btnClearCart" class="btn btn-sm btn-link text-danger p-0 text-decoration-none">
+          <i class="bi bi-trash"></i> Clear
+        </button>
+      </div>
+      <div class="row g-2">
+        <div class="col-7">
+          <input type="tel" id="posCustomerPhone" class="form-control form-control-sm" placeholder="Customer Phone (e.g. 9876543210)">
+        </div>
+        <div class="col-5">
+          <input type="text" id="posCustomerName" class="form-control form-control-sm" placeholder="Name (Optional)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Items Scroll Table -->
+    <div class="pos-items-scroll mb-3">
+      <table class="table table-sm align-middle mb-0">
+        <tbody id="posCartTableBody">
+          <!-- Populated by pos.js -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bill Totals & Controls -->
+    <div class="pt-3 border-top mt-auto">
+      <div class="d-flex justify-content-between text-muted small mb-1">
+        <span>Items Count:</span>
+        <span id="posItemCount" class="fw-bold text-charcoal">0 items</span>
+      </div>
+
+      <div class="d-flex justify-content-between text-muted small mb-1">
+        <span>Subtotal:</span>
+        <span id="posSubtotal" class="fw-bold text-charcoal">₹0.00</span>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="text-muted small">Special Discount (₹):</span>
+        <input type="number" id="posDiscountInput" class="form-control form-control-sm text-end" style="width: 100px;" placeholder="0.00" min="0">
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center py-2 px-3 rounded bg-ivory border mb-3">
+        <span class="fw-bold text-charcoal fs-5">Grand Total:</span>
+        <span id="posGrandTotal" class="fw-bold text-orange fs-4">₹0.00</span>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="mb-3">
+        <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size: 0.72rem;">Payment Method</label>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-sm btn-primary-fc flex-grow-1 payment-btn active" data-method="Cash">
+            <i class="bi bi-cash me-1"></i> Cash
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-fc flex-grow-1 payment-btn" data-method="UPI">
+            <i class="bi bi-qr-code me-1"></i> UPI QR
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-fc flex-grow-1 payment-btn" data-method="Card">
+            <i class="bi bi-credit-card me-1"></i> Card
+          </button>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button id="btnCompleteSale" class="btn btn-primary-fc w-100 py-3 fw-bold fs-6" disabled>
+        <i class="bi bi-check2-circle me-1"></i> Complete & Print Bill
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Invoice Generated Success Modal -->
+<div class="modal fade" id="posInvoiceModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="fc-card modal-content border-0">
+      <div class="modal-body p-4 text-center">
+        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 bg-success bg-opacity-10 text-success" style="width: 64px; height: 64px;">
+          <i class="bi bi-check-lg fs-1"></i>
+        </div>
+        <h4 class="fw-bold text-charcoal mb-1">Bill Recorded Successfully!</h4>
+        <p class="text-muted small mb-3">Stock balances and financial ledger updated in database.</p>
+
+        <div class="p-3 rounded bg-ivory border mb-4 text-start">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted small">Invoice Number:</span>
+            <span id="modalInvoiceNum" class="fw-bold font-monospace text-orange">INV-0000</span>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted small">Customer:</span>
+            <span id="modalCustName" class="fw-bold text-charcoal">Counter Walk-in</span>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-muted small">Payment Mode:</span>
+            <span id="modalPayMethod" class="badge bg-secondary">Cash</span>
+          </div>
+          <div class="d-flex justify-content-between pt-2 border-top">
+            <span class="fw-bold text-charcoal">Amount Collected:</span>
+            <span id="modalGrandTotal" class="fw-bold text-orange fs-5">₹0.00</span>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="button" id="btnModalPrint" class="btn btn-charcoal flex-grow-1 py-2">
+            <i class="bi bi-printer me-1"></i> Print Receipt
+          </button>
+          <button type="button" id="btnModalPdf" class="btn btn-outline-fc flex-grow-1 py-2">
+            <i class="bi bi-file-earmark-pdf me-1"></i> Download PDF
+          </button>
+          <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">
+            Next Bill
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/pos.js') }}"></script>
+<script>
+  const productsData = {{ products|tojson|safe }};
+  document.addEventListener('DOMContentLoaded', () => {
+    new POSBillingSystem(productsData);
+  });
+</script>
+{% endblock %}

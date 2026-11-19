@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout | Shop Collection Order{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Schedule Shop Collection</h1>
+          <p class="text-muted mb-0">Confirm your pickup window and contact details.</p>
+        </div>
+        <a href="{{ url_for('customer.view_cart') }}" class="btn btn-outline-fc btn-sm">
+          <i class="bi bi-arrow-left me-1"></i> Edit Cart
+        </a>
+      </div>
+
+      <div class="row g-4">
+        <!-- Contact & Pickup Form -->
+        <div class="col-md-7">
+          <div class="fc-card p-4">
+            <h4 class="fs-5 fw-bold text-charcoal mb-3"><i class="bi bi-person-lines-fill text-orange me-2"></i> Collector Details</h4>
+
+            <form id="checkoutForm">
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-charcoal">Customer Name</label>
+                <input type="text" id="custName" class="form-control" value="{{ current_user.full_name if current_user else '' }}" placeholder="Enter full name" required>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold text-charcoal">Mobile Phone (Required)</label>
+                  <input type="tel" id="custPhone" class="form-control" value="{{ current_user.phone if current_user else '' }}" placeholder="+91 98765 43210" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold text-charcoal">Email Address</label>
+                  <input type="email" id="custEmail" class="form-control" value="{{ current_user.email if current_user else '' }}" placeholder="name@example.com">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-charcoal">Preferred Collection Time Window</label>
+                <select id="pickupTime" class="form-select" required>
+                  <option value="Express Pickup (Within 45 Mins)">Express Pickup (Within 45 Mins)</option>
+                  <option value="Today: 1:00 PM - 3:00 PM">Today: 1:00 PM - 3:00 PM</option>
+                  <option value="Today: 5:00 PM - 7:00 PM" selected>Today: 5:00 PM - 7:00 PM</option>
+                  <option value="Today: 7:00 PM - 9:00 PM">Today: 7:00 PM - 9:00 PM</option>
+                  <option value="Tomorrow Morning: 7:30 AM - 10:00 AM">Tomorrow Morning: 7:30 AM - 10:00 AM</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-charcoal">Payment Preference at Counter</label>
+                <div class="d-flex gap-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="payOption" id="payCash" value="Cash on Collection" checked>
+                    <label class="form-check-label small fw-semibold" for="payCash">
+                      Cash on Pickup
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="payOption" id="payUPI" value="UPI on Collection">
+                    <label class="form-check-label small fw-semibold" for="payUPI">
+                      UPI QR Code on Pickup
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label small fw-bold text-charcoal">Butchery Special Requests / Notes</label>
+                <textarea id="orderNotes" class="form-control" rows="2" placeholder="e.g. please cut into small pieces for biryani; pack drumsticks separately."></textarea>
+              </div>
+
+              <div class="d-grid">
+                <button type="button" id="btnPlaceOrder" class="btn btn-primary-fc py-3 fw-bold fs-6">
+                  <i class="bi bi-check-circle-fill me-2"></i> Confirm & Place Order
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Order Summary Column -->
+        <div class="col-md-5">
+          <div class="fc-card p-4">
+            <h4 class="fs-5 fw-bold text-charcoal mb-3">Order Items (<span id="checkoutItemCount">0</span>)</h4>
+            
+            <div id="checkoutItemsList" class="mb-3 border-bottom pb-3" style="max-height: 280px; overflow-y: auto;">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-muted">Subtotal</span>
+              <span id="checkoutSubtotal" class="fw-bold">₹0.00</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-muted">Packaging</span>
+              <span class="text-success fw-bold">FREE</span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+              <span class="fs-5 fw-bold text-charcoal">Payable Amount</span>
+              <span id="checkoutGrandTotal" class="fs-4 fw-bold text-orange">₹0.00</span>
+            </div>
+
+            <div class="alert alert-light border mt-4 mb-0 small text-muted">
+              <strong>Shop Address:</strong><br>
+              {{ shop_info.address }}<br>
+              <i class="bi bi-telephone text-orange me-1"></i> {{ shop_info.phone }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const cart = StorefrontCart.getCart();
+  if (cart.length === 0) {
+    window.location.href = "{{ url_for('customer.product_catalog') }}";
+    return;
+  }
+
+  const itemsListEl = document.getElementById('checkoutItemsList');
+  const countEl = document.getElementById('checkoutItemCount');
+  const subtotalEl = document.getElementById('checkoutSubtotal');
+  const grandTotalEl = document.getElementById('checkoutGrandTotal');
+
+  let subtotal = 0;
+  countEl.innerText = cart.length;
+
+  itemsListEl.innerHTML = '';
+  cart.forEach(it => {
+    const tot = it.quantity * it.unit_price;
+    subtotal += tot;
+    const div = document.createElement('div');
+    div.className = 'd-flex justify-content-between align-items-start mb-2 small';
+    div.innerHTML = `
+      <div>
+        <div class="fw-bold text-charcoal">${it.product_name}</div>
+        <div class="text-muted">${it.quantity} ${it.unit} × ₹${it.unit_price.toFixed(2)}</div>
+      </div>
+      <div class="fw-bold text-charcoal">₹${tot.toFixed(2)}</div>
+    `;
+    itemsListEl.appendChild(div);
+  });
+
+  subtotalEl.innerText = `₹${subtotal.toFixed(2)}`;
+  grandTotalEl.innerText = `₹${subtotal.toFixed(2)}`;
+
+  // Place Order Action
+  const placeBtn = document.getElementById('btnPlaceOrder');
+  placeBtn.addEventListener('click', async () => {
+    const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
+    const email = document.getElementById('custEmail').value.trim();
+    const pickupTime = document.getElementById('pickupTime').value;
+    const notes = document.getElementById('orderNotes').value.trim();
+    const payOption = document.querySelector('input[name="payOption"]:checked').value;
+
+    if (!name || !phone) {
+      alert('Please enter your full name and contact phone number.');
+      return;
+    }
+
+    placeBtn.disabled = true;
+    placeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Confirming Order...';
+
+    const payload = {
+      customer_name: name,
+      customer_phone: phone,
+      customer_email: email,
+      pickup_time: pickupTime,
+      notes: notes,
+      payment_method: payOption,
+      items: cart.map(it => ({
+        product_id: it.product_id,
+        quantity: it.quantity
+      }))
+    };
+
+    try {
+      const resp = await fetch('/api/v1/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+
+      if (!resp.ok || !data.success) {
+        alert(data.message || 'Failed to place order.');
+        placeBtn.disabled = false;
+        placeBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Confirm & Place Order';
+        return;
+      }
+
+      // Clear local cart
+      StorefrontCart.clearCart();
+
+      // Redirect to confirmation page
+      window.location.href = `/order-confirmation/${data.data.order_number}`;
+
+    } catch (err) {
+      console.error(err);
+      alert('Network or server error while placing order.');
+      placeBtn.disabled = false;
+      placeBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Confirm & Place Order';
+    }
+  });
+});
+</script>
+{% endblock %}

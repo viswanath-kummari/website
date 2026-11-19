@@ -1,0 +1,82 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Price Management | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Price Management</h1>
+    <p class="text-muted mb-0">Update retail selling and wholesale cost prices. Price changes reflect immediately on the storefront while historical sales retain original prices.</p>
+  </div>
+</div>
+
+<!-- Category Filters -->
+<div class="fc-card p-3 mb-4">
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{{ url_for('admin.prices') }}" class="btn btn-sm {% if not active_category %}btn-charcoal{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      All 4 Categories
+    </a>
+    {% for cat in categories %}
+    <a href="{{ url_for('admin.prices', category=cat) }}" class="btn btn-sm {% if active_category == cat %}btn-primary-fc text-white{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      {{ cat }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Prices Table -->
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Unit</th>
+        <th style="width: 180px;">Selling Price (₹)</th>
+        <th style="width: 180px;">Cost Price (₹)</th>
+        <th>Current Margin</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      {% set margin = (p.selling_price|float - p.cost_price|float) %}
+      {% set margin_pct = (margin / p.selling_price|float * 100) if p.selling_price|float > 0 else 0 %}
+      <tr>
+        <td>
+          <div class="fw-bold text-charcoal">{{ p.name }}</div>
+          <small class="text-muted">Stock: {{ p.stock_quantity|qty(p.unit) }}</small>
+        </td>
+        <td><span class="badge bg-secondary">{{ p.category }}</span></td>
+        <td><span class="badge bg-light text-dark border">{{ p.unit }}</span></td>
+        <form method="POST" action="{{ url_for('admin.prices') }}">
+          <input type="hidden" name="product_id" value="{{ p.id }}">
+          <td>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white">₹</span>
+              <input type="number" step="0.01" min="0" name="selling_price" class="form-control font-weight-bold text-orange" value="{{ p.selling_price }}" required>
+            </div>
+          </td>
+          <td>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white">₹</span>
+              <input type="number" step="0.01" min="0" name="cost_price" class="form-control text-muted" value="{{ p.cost_price }}" required>
+            </div>
+          </td>
+          <td>
+            <span class="badge {% if margin > 0 %}bg-success{% else %}bg-danger{% endif %}">
+              ₹{{ margin|round(2) }} ({{ margin_pct|round(1) }}%)
+            </span>
+          </td>
+          <td>
+            <button type="submit" class="btn btn-sm btn-primary-fc py-1 px-3">
+              <i class="bi bi-check2"></i> Update
+            </button>
+          </td>
+        </form>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

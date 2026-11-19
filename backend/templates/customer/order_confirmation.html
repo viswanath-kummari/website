@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmed #{{ order.order_number }} | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="fc-card p-4 p-md-5 text-center border-top border-4 border-success">
+        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 bg-success bg-opacity-10 text-success" style="width: 72px; height: 72px;">
+          <i class="bi bi-check2-circle fs-1"></i>
+        </div>
+
+        <span class="badge bg-success text-white px-3 py-1 rounded-pill mb-2">Order Successfully Placed</span>
+        <h2 class="fs-3 fw-bold text-charcoal mb-1">Thank You, {{ order.customer_name }}!</h2>
+        <p class="text-muted small mb-4">Your fresh meat order has been recorded in our shop system.</p>
+
+        <!-- Order Reference Box -->
+        <div class="p-3 rounded-3 bg-ivory border mb-4">
+          <small class="text-muted text-uppercase fw-bold letter-spacing-1 d-block mb-1">Order Reference Number</small>
+          <span class="fs-3 fw-bold text-orange font-monospace">{{ order.order_number }}</span>
+          <div class="mt-2 text-muted small">
+            <i class="bi bi-clock me-1"></i> Requested Pickup: <strong>{{ order.pickup_time }}</strong>
+          </div>
+        </div>
+
+        <!-- Items Summary -->
+        <div class="text-start mb-4">
+          <h5 class="fw-bold fs-6 mb-3 border-bottom pb-2">Items Summary</h5>
+          <div class="table-responsive">
+            <table class="table table-sm small align-middle">
+              <thead>
+                <tr class="text-muted">
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th class="text-end">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for it in order.items %}
+                <tr>
+                  <td>
+                    <div class="fw-bold">{{ it.product_name }}</div>
+                    <small class="text-muted">₹{{ it.unit_price }} / {{ it.unit }}</small>
+                  </td>
+                  <td>{{ it.quantity }} {{ it.unit }}</td>
+                  <td class="text-end fw-bold">₹{{ it.line_total }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="2" class="text-end pt-2">Payable Total:</th>
+                  <th class="text-end pt-2 text-orange fs-6">₹{{ order.grand_total }}</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="alert alert-light border text-start small mb-4">
+          <h6 class="fw-bold text-charcoal mb-1"><i class="bi bi-shop text-orange me-1"></i> Pickup Instructions</h6>
+          <p class="mb-1">1. Visit our store at <strong>{{ shop_info.address }}</strong>.</p>
+          <p class="mb-1">2. Show your Order Reference <strong>{{ order.order_number }}</strong> or phone number at the counter.</p>
+          <p class="mb-0">3. Pay <strong>₹{{ order.grand_total }}</strong> via Cash or UPI and collect your chilled vacuum-packed order.</p>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3">
+          <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-outline-fc">
+            <i class="bi bi-bag me-1"></i> Continue Shopping
+          </a>
+          {% if current_user %}
+          <a href="{{ url_for('customer.my_orders') }}" class="btn btn-primary-fc">
+            <i class="bi bi-receipt me-1"></i> View Order History
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

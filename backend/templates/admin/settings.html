@@ -1,0 +1,74 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Shop Settings | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Shop Settings & Configuration</h1>
+        <p class="text-muted mb-0">Customize store branding, address, tax configuration, and invoice receipt footers.</p>
+      </div>
+    </div>
+
+    <div class="fc-card p-4 p-md-5">
+      <form method="POST" action="{{ url_for('admin.settings_page') }}">
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-charcoal">Store Name</label>
+            <input type="text" name="shop_name" class="form-control" value="{{ settings.shop_name }}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-charcoal">Tagline</label>
+            <input type="text" name="tagline" class="form-control" value="{{ settings.tagline }}">
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-charcoal">Customer Contact Phone</label>
+            <input type="tel" name="phone" class="form-control" value="{{ settings.phone }}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-charcoal">Contact Email</label>
+            <input type="email" name="email" class="form-control" value="{{ settings.email }}" required>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label small fw-bold text-charcoal">Shop Physical Address</label>
+          <textarea name="address" class="form-control" rows="2" required>{{ settings.address }}</textarea>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <label class="form-label small fw-bold text-charcoal">Operating Hours</label>
+            <input type="text" name="opening_hours" class="form-control" value="{{ settings.opening_hours }}" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold text-charcoal">Currency Symbol</label>
+            <input type="text" name="currency_symbol" class="form-control" value="{{ settings.currency_symbol }}" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-bold text-charcoal">Default Low Stock Alert</label>
+            <input type="number" step="0.001" min="0" name="low_stock_default" class="form-control" value="{{ settings.low_stock_default }}" required>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label small fw-bold text-charcoal">Invoice Footer Custom Message</label>
+          <textarea name="invoice_footer_message" class="form-control" rows="2">{{ settings.invoice_footer_message }}</textarea>
+          <small class="text-muted">Appears at the bottom of all POS customer invoices and PDF printouts.</small>
+        </div>
+
+        <div class="d-flex justify-content-end pt-3 border-top">
+          <button type="submit" class="btn btn-primary-fc px-4 py-2 fw-bold">
+            <i class="bi bi-save me-1"></i> Save Shop Settings
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

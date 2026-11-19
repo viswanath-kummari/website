@@ -1,0 +1,96 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Sales History & Invoices | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Sales History & Invoices</h1>
+    <p class="text-muted mb-0">Search all historical retail sales bills, print thermal receipts, and download PDF invoices.</p>
+  </div>
+  <a href="{{ url_for('admin.pos') }}" class="btn btn-primary-fc">
+    <i class="bi bi-calculator me-1"></i> New Counter Bill
+  </a>
+</div>
+
+<!-- Date and Search Filters -->
+<div class="fc-card p-3 mb-4">
+  <form method="GET" action="{{ url_for('admin.sales_history') }}" class="row g-2 align-items-center">
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-1">Start Date</label>
+      <input type="date" name="start_date" class="form-control form-control-sm" value="{{ request.args.get('start_date', '') }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label small text-muted mb-1">End Date</label>
+      <input type="date" name="end_date" class="form-control form-control-sm" value="{{ request.args.get('end_date', '') }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label small text-muted mb-1">Search Keywords</label>
+      <input type="text" name="search" class="form-control form-control-sm" placeholder="Invoice #, customer name or phone..." value="{{ request.args.get('search', '') }}">
+    </div>
+    <div class="col-md-2 mt-auto">
+      <button type="submit" class="btn btn-charcoal btn-sm w-100 py-2">Filter Records</button>
+    </div>
+  </form>
+</div>
+
+<!-- Sales Table -->
+{% if sales %}
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Invoice Number</th>
+        <th>Date & Time</th>
+        <th>Customer</th>
+        <th>Staff Billed By</th>
+        <th>Items Count</th>
+        <th>Discount</th>
+        <th>Grand Total</th>
+        <th>Payment</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sales %}
+      <tr>
+        <td class="fw-bold font-monospace text-orange">{{ s.invoice_number }}</td>
+        <td class="small">{{ s.created_at|string }}</td>
+        <td>
+          <div class="fw-bold">{{ s.customer_name or 'Counter Walk-in' }}</div>
+          <small class="text-muted">{{ s.customer_phone or '' }}</small>
+        </td>
+        <td>{{ s.employee_name or 'Admin / Self' }}</td>
+        <td><span class="badge bg-light text-dark border">{{ s.total_items }} items</span></td>
+        <td>
+          {% if s.discount|float > 0 %}
+            <span class="text-danger">-{{ s.discount|currency }}</span>
+          {% else %}
+            <span class="text-muted">₹0.00</span>
+          {% endif %}
+        </td>
+        <td class="fw-bold fs-6 text-charcoal">{{ s.grand_total|currency }}</td>
+        <td><span class="badge bg-secondary">{{ s.payment_method }}</span></td>
+        <td>
+          <div class="d-flex gap-1">
+            <a href="{{ url_for('admin.print_invoice', invoice_number=s.invoice_number) }}" target="_blank" class="btn btn-sm btn-outline-fc py-1 px-2" title="Print Receipt">
+              <i class="bi bi-printer"></i>
+            </a>
+            <a href="{{ url_for('admin.download_invoice_pdf', invoice_number=s.invoice_number) }}" class="btn btn-sm btn-outline-fc py-1 px-2" title="Download PDF">
+              <i class="bi bi-file-earmark-pdf"></i>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="fc-card p-5 text-center">
+  <i class="bi bi-receipt display-4 text-muted mb-2 d-block"></i>
+  <h4 class="fw-bold text-charcoal">No Sales Invoices Found</h4>
+  <p class="text-muted">No sales matched the specified date or search filter.</p>
+</div>
+{% endif %}
+{% endblock %}

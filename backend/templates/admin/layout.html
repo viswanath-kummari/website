@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Owner Console | Fresh Cut Meat Shop{% endblock %}</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/theme.css') }}" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-ivory">
+
+  <div class="admin-layout">
+    <!-- Owner / Admin 18-Section Navigation Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none d-flex align-items-center gap-2">
+          <div class="rounded-circle d-flex align-items-center justify-content-center text-white bg-orange" style="width: 38px; height: 38px;">
+            <i class="bi bi-shield-check fs-5"></i>
+          </div>
+          <div>
+            <div class="fw-bold heading-serif fs-5 text-white" style="line-height: 1;">Fresh Cut</div>
+            <small class="text-orange" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Owner Platform</small>
+          </div>
+        </a>
+      </div>
+
+      <ul class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+
+        <!-- 2. Products Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.products' %}active{% endif %}" href="{{ url_for('admin.products') }}">
+            <i class="bi bi-box-seam"></i> Products Management
+          </a>
+        </li>
+
+        <!-- 3. Price Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.prices' %}active{% endif %}" href="{{ url_for('admin.prices') }}">
+            <i class="bi bi-tag"></i> Price Management
+          </a>
+        </li>
+
+        <!-- 4. POS / Billing -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.pos' %}active{% endif %}" href="{{ url_for('admin.pos') }}">
+            <i class="bi bi-calculator"></i> POS / Billing
+          </a>
+        </li>
+
+        <!-- 5. Inventory Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.inventory' %}active{% endif %}" href="{{ url_for('admin.inventory') }}">
+            <i class="bi bi-boxes"></i> Inventory Management
+          </a>
+        </li>
+
+        <!-- 6. Online Orders -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.online_orders' %}active{% endif %}" href="{{ url_for('admin.online_orders') }}">
+            <i class="bi bi-bag-check"></i> Online Orders
+          </a>
+        </li>
+
+        <!-- 7. Customer Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint in ['admin.customers', 'admin.customer_detail'] %}active{% endif %}" href="{{ url_for('admin.customers') }}">
+            <i class="bi bi-people"></i> Customer Management
+          </a>
+        </li>
+
+        <!-- 8. Employee Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.employees' %}active{% endif %}" href="{{ url_for('admin.employees') }}">
+            <i class="bi bi-person-badge"></i> Employee Management
+          </a>
+        </li>
+
+        <!-- 9. Supplier Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.suppliers' %}active{% endif %}" href="{{ url_for('admin.suppliers') }}">
+            <i class="bi bi-truck"></i> Supplier Management
+          </a>
+        </li>
+
+        <!-- 10. Purchase Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.purchases' %}active{% endif %}" href="{{ url_for('admin.purchases') }}">
+            <i class="bi bi-cart-check"></i> Purchase Management
+          </a>
+        </li>
+
+        <!-- 11. Expenses Management -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.expenses' %}active{% endif %}" href="{{ url_for('admin.expenses') }}">
+            <i class="bi bi-cash-stack"></i> Expenses Management
+          </a>
+        </li>
+
+        <!-- 12. Payments -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.payments' %}active{% endif %}" href="{{ url_for('admin.payments') }}">
+            <i class="bi bi-credit-card-2-front"></i> Payments Log
+          </a>
+        </li>
+
+        <!-- 13. Sales History -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.sales_history' %}active{% endif %}" href="{{ url_for('admin.sales_history') }}">
+            <i class="bi bi-receipt-cutoff"></i> Sales History
+          </a>
+        </li>
+
+        <!-- 14. Reports & Analytics -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint in ['admin.reports', 'admin.export_report'] %}active{% endif %}" href="{{ url_for('admin.reports') }}">
+            <i class="bi bi-graph-up-arrow"></i> Reports & Analytics
+          </a>
+        </li>
+
+        <!-- 15. Shop Settings -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.settings_page' %}active{% endif %}" href="{{ url_for('admin.settings_page') }}">
+            <i class="bi bi-gear"></i> Shop Settings
+          </a>
+        </li>
+
+        <!-- 16. Audit Logs -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.audit_logs' %}active{% endif %}" href="{{ url_for('admin.audit_logs') }}">
+            <i class="bi bi-journal-text"></i> Audit Logs
+          </a>
+        </li>
+
+        <!-- 17. Profile -->
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin.profile' %}active{% endif %}" href="{{ url_for('admin.profile') }}">
+            <i class="bi bi-person-circle"></i> Owner Profile
+          </a>
+        </li>
+
+        <!-- 18. Logout -->
+        <li class="nav-item mt-3 pt-2 border-top border-secondary border-opacity-25">
+          <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">
+            <i class="bi bi-box-arrow-right"></i> Sign Out
+          </a>
+        </li>
+      </ul>
+
+      <div class="p-3 border-top border-secondary border-opacity-25 small text-muted">
+        <a href="{{ url_for('customer.home') }}" target="_blank" class="text-white-50 text-decoration-none">
+          <i class="bi bi-box-arrow-up-right me-1"></i> View Customer Store
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

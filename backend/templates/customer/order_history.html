@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}My Orders | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">My Orders</h1>
+      <p class="text-muted mb-0">Track your past and active pickup orders.</p>
+    </div>
+    <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-primary-fc">
+      <i class="bi bi-plus-lg me-1"></i> Order Fresh Meat
+    </a>
+  </div>
+
+  {% if orders %}
+    <div class="fc-table-wrap">
+      <table class="table fc-table mb-0">
+        <thead>
+          <tr>
+            <th>Order Ref #</th>
+            <th>Date & Time</th>
+            <th>Items</th>
+            <th>Collection Time</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ord in orders %}
+          <tr>
+            <td class="fw-bold font-monospace text-orange">{{ ord.order_number }}</td>
+            <td class="small">{{ ord.created_at|string }}</td>
+            <td><span class="badge bg-light text-dark border">{{ ord.total_items }} items</span></td>
+            <td class="small">{{ ord.pickup_time }}</td>
+            <td class="fw-bold">{{ ord.grand_total|currency }}</td>
+            <td>
+              {% if ord.status == 'Pending' %}
+                <span class="badge-status status-pending"><i class="bi bi-hourglass-split"></i> Pending Confirmation</span>
+              {% elif ord.status == 'Accepted' %}
+                <span class="badge-status status-accepted"><i class="bi bi-check2"></i> Packing Fresh</span>
+              {% elif ord.status == 'Ready for Collection' %}
+                <span class="badge-status status-ready"><i class="bi bi-bag-check"></i> Ready at Counter</span>
+              {% elif ord.status == 'Completed' %}
+                <span class="badge-status status-completed"><i class="bi bi-check-circle-fill"></i> Collected</span>
+              {% else %}
+                <span class="badge-status status-cancelled"><i class="bi bi-x-circle"></i> Cancelled</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('customer.order_confirmation', order_number=ord.order_number) }}" class="btn btn-sm btn-outline-fc">
+                View Receipt
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="fc-card p-5 text-center">
+      <i class="bi bi-receipt display-4 text-muted d-block mb-3"></i>
+      <h4 class="fw-bold text-charcoal">No Previous Orders</h4>
+      <p class="text-muted">You haven't placed any pickup orders yet.</p>
+      <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-primary-fc mt-2">
+        Browse Meat Store
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

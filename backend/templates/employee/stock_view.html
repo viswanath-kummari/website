@@ -1,0 +1,67 @@
+{% extends 'employee/layout.html' %}
+
+{% block title %}Stock Availability | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Permitted Stock Availability</h1>
+    <p class="text-muted mb-0">Live counter view of products and available quantities.</p>
+  </div>
+  <a href="{{ url_for('employee.pos_billing') }}" class="btn btn-primary-fc">
+    <i class="bi bi-calculator me-1"></i> Go to Billing Counter
+  </a>
+</div>
+
+<!-- Category Filter Pills -->
+<div class="d-flex flex-wrap gap-2 mb-4 pb-2 border-bottom">
+  <a href="{{ url_for('employee.stock_view') }}" 
+     class="btn btn-sm {% if not active_category %}btn-charcoal{% else %}btn-outline-fc{% endif %} px-3 py-2 rounded-pill">
+    All 4 Categories
+  </a>
+  {% for cat in categories %}
+  <a href="{{ url_for('employee.stock_view', category=cat) }}" 
+     class="btn btn-sm {% if active_category == cat %}btn-primary-fc text-white{% else %}btn-outline-fc{% endif %} px-3 py-2 rounded-pill">
+    {{ cat }}
+  </a>
+  {% endfor %}
+</div>
+
+<!-- Stock Items Table -->
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Unit</th>
+        <th>Current Counter Price</th>
+        <th>Available Quantity</th>
+        <th>Alert Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for it in stock_items %}
+      <tr>
+        <td class="fw-bold text-charcoal">{{ it.product_name }}</td>
+        <td><span class="badge bg-secondary">{{ it.category }}</span></td>
+        <td><span class="badge bg-light text-dark border">{{ it.unit }}</span></td>
+        <td class="fw-bold fs-6 text-orange">{{ it.selling_price|currency }}</td>
+        <td class="fw-bold fs-6">
+          {{ it.available_stock|qty(it.unit) }}
+        </td>
+        <td>
+          {% if it.available_stock|float <= 0 %}
+            <span class="badge bg-danger">OUT OF STOCK</span>
+          {% elif it.is_low_stock %}
+            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i> LOW STOCK</span>
+          {% else %}
+            <span class="badge bg-success"><i class="bi bi-check-circle"></i> ADEQUATE</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Payments & Transactions | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Financial Transactions & Payments</h1>
+    <p class="text-muted mb-0">Unified ledger of customer sales receipts, supplier payments, and expense payouts.</p>
+  </div>
+</div>
+
+<!-- Type Filter -->
+<div class="fc-card p-3 mb-4">
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{{ url_for('admin.payments') }}" class="btn btn-sm {% if not active_type %}btn-charcoal{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      All Transactions
+    </a>
+    <a href="{{ url_for('admin.payments', type='CUSTOMER_RECEIPT') }}" class="btn btn-sm {% if active_type == 'CUSTOMER_RECEIPT' %}btn-primary-fc text-white{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      <i class="bi bi-arrow-down-left me-1"></i> Customer Receipts (Inflow)
+    </a>
+    <a href="{{ url_for('admin.payments', type='SUPPLIER_PAYMENT') }}" class="btn btn-sm {% if active_type == 'SUPPLIER_PAYMENT' %}btn-primary-fc text-white{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      <i class="bi bi-arrow-up-right me-1"></i> Supplier Payments (Outflow)
+    </a>
+    <a href="{{ url_for('admin.payments', type='EXPENSE_PAYMENT') }}" class="btn btn-sm {% if active_type == 'EXPENSE_PAYMENT' %}btn-primary-fc text-white{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      <i class="bi bi-arrow-up-right me-1"></i> Operating Expense Payouts
+    </a>
+  </div>
+</div>
+
+<!-- Payments Table -->
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Date & Time</th>
+        <th>Type</th>
+        <th>Reference ID</th>
+        <th>Party / Beneficiary</th>
+        <th>Amount</th>
+        <th>Payment Method</th>
+        <th>Notes</th>
+        <th>Recorded By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in payments %}
+      <tr>
+        <td class="small">{{ p.created_at|string }}</td>
+        <td>
+          {% if p.payment_type == 'CUSTOMER_RECEIPT' %}
+            <span class="badge bg-success"><i class="bi bi-plus-circle me-1"></i> RECEIPT</span>
+          {% elif p.payment_type == 'SUPPLIER_PAYMENT' %}
+            <span class="badge bg-danger"><i class="bi bi-dash-circle me-1"></i> SUPPLIER</span>
+          {% else %}
+            <span class="badge bg-warning text-dark"><i class="bi bi-dash-circle me-1"></i> EXPENSE</span>
+          {% endif %}
+        </td>
+        <td class="fw-bold font-monospace">{{ p.reference_id or 'DIRECT' }}</td>
+        <td>
+          {{ p.customer_name or p.supplier_name or 'General Store Operations' }}
+        </td>
+        <td class="fw-bold fs-6 {% if p.payment_type == 'CUSTOMER_RECEIPT' %}text-success{% else %}text-danger{% endif %}">
+          {% if p.payment_type == 'CUSTOMER_RECEIPT' %}+{% else %}-{% endif %}{{ p.amount|currency }}
+        </td>
+        <td><span class="badge bg-light text-dark border">{{ p.payment_method }}</span></td>
+        <td class="text-muted small">{{ p.notes or '' }}</td>
+        <td>{{ p.recorded_by_name or 'System' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

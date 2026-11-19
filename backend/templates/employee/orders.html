@@ -1,0 +1,88 @@
+{% extends 'employee/layout.html' %}
+
+{% block title %}Pickup Orders | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Customer Online Pickup Orders</h1>
+    <p class="text-muted mb-0">Fulfill shop collection orders placed through the customer storefront.</p>
+  </div>
+</div>
+
+<!-- Status Filters -->
+<div class="d-flex flex-wrap gap-2 mb-4 pb-2 border-bottom">
+  {% for st in ['All', 'Pending', 'Accepted', 'Ready for Collection', 'Completed', 'Cancelled'] %}
+  <a href="{{ url_for('employee.online_orders', status=st) }}" 
+     class="btn btn-sm {% if active_status == st %}btn-primary-fc{% else %}btn-outline-fc{% endif %} px-3 py-1 rounded-pill">
+    {{ st }}
+  </a>
+  {% endfor %}
+</div>
+
+{% if orders %}
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Order Ref #</th>
+        <th>Customer</th>
+        <th>Phone</th>
+        <th>Requested Collection</th>
+        <th>Items</th>
+        <th>Total Amount</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ord in orders %}
+      <tr>
+        <td class="fw-bold font-monospace text-orange">{{ ord.order_number }}</td>
+        <td class="fw-bold text-charcoal">{{ ord.customer_name }}</td>
+        <td>{{ ord.customer_phone }}</td>
+        <td class="small">{{ ord.pickup_time }}</td>
+        <td><span class="badge bg-light text-dark border">{{ ord.total_items }} items</span></td>
+        <td class="fw-bold text-charcoal">{{ ord.grand_total|currency }}</td>
+        <td>
+          {% if ord.status == 'Pending' %}
+            <span class="badge-status status-pending">Pending</span>
+          {% elif ord.status == 'Accepted' %}
+            <span class="badge-status status-accepted">Packing</span>
+          {% elif ord.status == 'Ready for Collection' %}
+            <span class="badge-status status-ready">Ready</span>
+          {% elif ord.status == 'Completed' %}
+            <span class="badge-status status-completed">Completed</span>
+          {% else %}
+            <span class="badge-status status-cancelled">Cancelled</span>
+          {% endif %}
+        </td>
+        <td>
+          <form method="POST" action="{{ url_for('employee.process_order_status', order_id=ord.id) }}" class="d-flex gap-1">
+            {% if ord.status == 'Pending' %}
+              <input type="hidden" name="status" value="Accepted">
+              <button type="submit" class="btn btn-sm btn-outline-fc py-1 px-2" title="Accept Order">Accept</button>
+            {% elif ord.status == 'Accepted' %}
+              <input type="hidden" name="status" value="Ready for Collection">
+              <button type="submit" class="btn btn-sm btn-sage py-1 px-2" title="Mark Ready">Ready</button>
+            {% elif ord.status == 'Ready for Collection' %}
+              <input type="hidden" name="status" value="Completed">
+              <button type="submit" class="btn btn-sm btn-primary-fc py-1 px-2" title="Mark Collected & Paid">Collect</button>
+            {% else %}
+              <span class="text-muted small">Done</span>
+            {% endif %}
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="fc-card p-5 text-center">
+  <i class="bi bi-bag-check display-4 text-muted mb-2 d-block"></i>
+  <h4 class="fw-bold text-charcoal">No Orders Found</h4>
+  <p class="text-muted">No pickup orders in the selected status.</p>
+</div>
+{% endif %}
+{% endblock %}

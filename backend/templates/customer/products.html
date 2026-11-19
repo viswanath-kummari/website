@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Fresh Meat & Seafood Catalog | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header & Filters -->
+  <div class="row align-items-center mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+      <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Fresh Cuts Catalog</h1>
+      <p class="text-muted mb-0">Browse our 4 strictly controlled fresh categories.</p>
+    </div>
+    <div class="col-md-6">
+      <form method="GET" action="{{ url_for('customer.product_catalog') }}" class="d-flex gap-2">
+        {% if active_category %}
+          <input type="hidden" name="category" value="{{ active_category }}">
+        {% endif %}
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" name="search" class="form-control border-start-0" placeholder="Search chicken, mutton, rohu, eggs..." value="{{ search_query or '' }}">
+        </div>
+        <button type="submit" class="btn btn-charcoal px-3">Search</button>
+        {% if search_query or active_category %}
+          <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-outline-secondary" title="Clear Filters">
+            <i class="bi bi-x-lg"></i>
+          </a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <!-- 4 Category Filter Pills -->
+  <div class="d-flex flex-wrap gap-2 mb-4 pb-2 border-bottom">
+    <a href="{{ url_for('customer.product_catalog', search=search_query) }}" 
+       class="btn btn-sm {% if not active_category %}btn-charcoal{% else %}btn-outline-fc{% endif %} px-3 py-2 rounded-pill">
+      All Products
+    </a>
+    {% for cat in categories %}
+    <a href="{{ url_for('customer.product_catalog', category=cat, search=search_query) }}" 
+       class="btn btn-sm {% if active_category == cat %}btn-primary-fc text-white{% else %}btn-outline-fc{% endif %} px-3 py-2 rounded-pill">
+      {{ cat }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Products Grid -->
+  {% if products %}
+    <div class="row g-4">
+      {% for p in products %}
+      <div class="col-sm-6 col-lg-4 col-xl-3">
+        <div class="product-card">
+          <div class="card-img-wrap">
+            <img src="{{ p.image_url }}" alt="{{ p.name }}" onerror="this.src='/static/images/default_product.jpg'">
+            <span class="badge-category">{{ p.category }}</span>
+            {% if p.available_stock|float > 0 %}
+              <span class="badge-stock bg-success text-white">In Stock ({{ p.available_stock|qty(p.unit) }})</span>
+            {% else %}
+              <span class="badge-stock bg-danger text-white">Sold Out</span>
+            {% endif %}
+          </div>
+
+          <div class="card-body">
+            <h5 class="product-title">{{ p.name }}</h5>
+            <p class="product-desc">{{ p.description or 'Fresh cut artisanal meat prepared daily to highest hygiene standards.' }}</p>
+
+            <div class="price-row mb-3">
+              <div>
+                <span class="price-val">{{ p.selling_price|currency }}</span>
+                <span class="price-unit">/ {{ p.unit }}</span>
+              </div>
+            </div>
+
+            {% if p.available_stock|float > 0 %}
+              <button class="btn btn-primary-fc w-100 btn-add-to-cart"
+                      data-id="{{ p.id }}"
+                      data-name="{{ p.name }}"
+                      data-category="{{ p.category }}"
+                      data-unit="{{ p.unit }}"
+                      data-price="{{ p.selling_price }}"
+                      data-img="{{ p.image_url }}">
+                <i class="bi bi-bag-plus me-1"></i> Add to Cart
+              </button>
+            {% else %}
+              <button class="btn btn-secondary w-100" disabled>
+                Currently Unavailable
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5 fc-card p-5">
+      <i class="bi bi-emoji-neutral display-4 text-muted mb-3 d-block"></i>
+      <h4 class="fw-bold text-charcoal">No products found</h4>
+      <p class="text-muted">No items matched your current filter or search criteria.</p>
+      <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-primary-fc mt-2">
+        Reset Filter & View All
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

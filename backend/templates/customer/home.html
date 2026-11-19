@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+
+{% block title %}Fresh Cut Meat Shop | Premium Quality Chicken, Mutton, Eggs & Fish{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5" style="background: linear-gradient(135deg, var(--fc-deep-charcoal) 0%, #2e3632 100%); color: #ffffff;">
+  <div class="container py-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(217, 119, 69, 0.2); border: 1px solid var(--fc-burnt-orange); color: var(--fc-burnt-orange); font-size: 0.82rem; font-weight: 600;">
+          <i class="bi bi-star-fill"></i> Artisanal Quality Meat & Seafood
+        </div>
+        <h1 class="display-4 fw-bold heading-serif text-white mb-3" style="line-height: 1.15;">
+          Freshly Cut, Hygienically Packed & 100% Halal Certified
+        </h1>
+        <p class="lead text-white-50 mb-4" style="font-size: 1.15rem;">
+          Experience supreme freshness with daily dressed tender chicken, pasture-fed country goat mutton, farm-fresh eggs, and pristine sea & freshwater fish.
+        </p>
+
+        <div class="d-flex flex-wrap gap-3 mb-4">
+          <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-primary-fc px-4 py-3 fs-6">
+            <i class="bi bi-grid-fill me-2"></i> Browse Fresh Cuts
+          </a>
+          <a href="#categorySection" class="btn btn-outline-light px-4 py-3 fs-6" style="border-radius: var(--fc-radius-md);">
+            <i class="bi bi-tag-fill me-2"></i> Explore 4 Categories
+          </a>
+        </div>
+
+        <div class="row g-3 pt-3 border-top border-secondary border-opacity-25 text-white-50 small">
+          <div class="col-auto d-flex align-items-center gap-2">
+            <i class="bi bi-shield-check text-orange fs-5"></i> <span>Daily Temperature Controlled</span>
+          </div>
+          <div class="col-auto d-flex align-items-center gap-2">
+            <i class="bi bi-basket text-orange fs-5"></i> <span>Shop Counter Pickup Ready</span>
+          </div>
+          <div class="col-auto d-flex align-items-center gap-2">
+            <i class="bi bi-award text-orange fs-5"></i> <span>100% Precision Weighing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="position-relative">
+          <img src="{{ url_for('static', filename='images/hero_meat.jpg') }}" alt="Fresh Meat Shop Banner" class="img-fluid rounded-4 shadow-lg w-100" style="height: 380px; object-fit: cover; border: 2px solid rgba(255,255,255,0.1);">
+          <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-charcoal bg-opacity-90 backdrop-blur rounded-3 text-white border border-secondary border-opacity-50" style="max-width: 280px;">
+            <div class="fw-bold text-orange mb-1"><i class="bi bi-clock-history"></i> Opening Hours</div>
+            <div class="small">{{ shop_info.opening_hours or 'Mon - Sun: 7:00 AM - 9:00 PM' }}</div>
+            <div class="small text-muted mt-1">{{ shop_info.address }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 Strict Product Categories Section -->
+<section id="categorySection" class="py-5" style="background-color: var(--fc-warm-ivory);">
+  <div class="container py-2">
+    <div class="text-center mb-5">
+      <span class="text-orange text-uppercase fw-bold small letter-spacing-1">Our Core Specializations</span>
+      <h2 class="display-6 fw-bold heading-serif text-charcoal">Four Premium Fresh Categories</h2>
+      <p class="text-muted">Strictly fresh, responsibly sourced, and cut to order by master butchers.</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- 1. Chicken Items -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{{ url_for('customer.product_catalog', category='Chicken Items') }}" class="text-decoration-none">
+          <div class="fc-card p-4 text-center h-100 border-top border-4" style="border-top-color: #d97745 !important;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 70px; height: 70px; background: rgba(217, 119, 69, 0.12); color: #d97745;">
+              <i class="bi bi-fire fs-2"></i>
+            </div>
+            <h4 class="fs-5 fw-bold text-charcoal mb-1">Chicken Items</h4>
+            <p class="text-muted small mb-3">Whole curry cuts, boneless breasts, plump drumsticks & natukodi.</p>
+            <span class="badge bg-charcoal text-white rounded-pill px-3 py-1">{{ category_counts['Chicken Items'] or 6 }} Varieties</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 2. Mutton Items -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{{ url_for('customer.product_catalog', category='Mutton Items') }}" class="text-decoration-none">
+          <div class="fc-card p-4 text-center h-100 border-top border-4" style="border-top-color: #81917b !important;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 70px; height: 70px; background: rgba(129, 145, 123, 0.15); color: #81917b;">
+              <i class="bi bi-trophy fs-2"></i>
+            </div>
+            <h4 class="fs-5 fw-bold text-charcoal mb-1">Mutton Items</h4>
+            <p class="text-muted small mb-3">Tender pasture goat curry cuts, prime chops, liver & collagen paya.</p>
+            <span class="badge bg-charcoal text-white rounded-pill px-3 py-1">{{ category_counts['Mutton Items'] or 6 }} Varieties</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 3. Eggs -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{{ url_for('customer.product_catalog', category='Eggs') }}" class="text-decoration-none">
+          <div class="fc-card p-4 text-center h-100 border-top border-4" style="border-top-color: #e0ab48 !important;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 70px; height: 70px; background: rgba(224, 171, 72, 0.15); color: #c48e2a;">
+              <i class="bi bi-egg-fried fs-2"></i>
+            </div>
+            <h4 class="fs-5 fw-bold text-charcoal mb-1">Eggs</h4>
+            <p class="text-muted small mb-3">Farm fresh whites, country brown eggs, trays of 30 & pure Kadaknath.</p>
+            <span class="badge bg-charcoal text-white rounded-pill px-3 py-1">{{ category_counts['Eggs'] or 5 }} Varieties</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 4. Fish Items -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{{ url_for('customer.product_catalog', category='Fish Items') }}" class="text-decoration-none">
+          <div class="fc-card p-4 text-center h-100 border-top border-4" style="border-top-color: #2b7a8a !important;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 70px; height: 70px; background: rgba(43, 122, 138, 0.15); color: #2b7a8a;">
+              <i class="bi bi-water fs-2"></i>
+            </div>
+            <h4 class="fs-5 fw-bold text-charcoal mb-1">Fish Items</h4>
+            <p class="text-muted small mb-3">River Rohu, Catla, Vanjaram seer steaks, jumbo prawns & Pomfret.</p>
+            <span class="badge bg-charcoal text-white rounded-pill px-3 py-1">{{ category_counts['Fish Items'] or 6 }} Varieties</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="py-5" style="background-color: #ffffff;">
+  <div class="container py-2">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+      <div>
+        <span class="text-orange text-uppercase fw-bold small">Today's Fresh Stock</span>
+        <h2 class="display-6 fw-bold heading-serif text-charcoal mb-1">Featured Fresh Meat & Seafood</h2>
+        <p class="text-muted mb-0">Accurate live prices straight from our Supabase inventory database.</p>
+      </div>
+      <div class="mt-3 mt-md-0">
+        <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-outline-fc">
+          View All Products <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row g-4">
+      {% for p in products[:8] %}
+      <div class="col-md-6 col-lg-3">
+        <div class="product-card">
+          <div class="card-img-wrap">
+            <img src="{{ p.image_url }}" alt="{{ p.name }}" onerror="this.src='/static/images/default_product.jpg'">
+            <span class="badge-category">{{ p.category }}</span>
+            {% if p.available_stock|float > 0 %}
+              <span class="badge-stock bg-success text-white">In Stock ({{ p.available_stock|qty(p.unit) }})</span>
+            {% else %}
+              <span class="badge-stock bg-danger text-white">Sold Out</span>
+            {% endif %}
+          </div>
+
+          <div class="card-body">
+            <h5 class="product-title">{{ p.name }}</h5>
+            <p class="product-desc">{{ p.description[:85] }}...</p>
+
+            <div class="price-row mb-3">
+              <div>
+                <span class="price-val">{{ p.selling_price|currency }}</span>
+                <span class="price-unit">/ {{ p.unit }}</span>
+              </div>
+            </div>
+
+            {% if p.available_stock|float > 0 %}
+              <button class="btn btn-primary-fc w-100 btn-add-to-cart"
+                      data-id="{{ p.id }}"
+                      data-name="{{ p.name }}"
+                      data-category="{{ p.category }}"
+                      data-unit="{{ p.unit }}"
+                      data-price="{{ p.selling_price }}"
+                      data-img="{{ p.image_url }}">
+                <i class="bi bi-bag-plus me-1"></i> Add to Cart
+              </button>
+            {% else %}
+              <button class="btn btn-secondary w-100" disabled>
+                Currently Unavailable
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Shop Introduction & Quality Promise Section -->
+<section class="py-5" style="background-color: var(--fc-warm-ivory);">
+  <div class="container py-3">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="pe-lg-4">
+          <span class="badge bg-sage text-white px-3 py-1 rounded-pill mb-3">The Fresh Cut Standard</span>
+          <h2 class="display-5 fw-bold heading-serif text-charcoal mb-4">
+            Why Discerning Food Lovers Choose Fresh Cut
+          </h2>
+          <p class="text-muted mb-4 leading-relaxed">
+            Unlike industrial packaged meats that sit in chemical brine for weeks, Fresh Cut adheres to traditional artisanal dressing. We receive live birds, livestock from certified Telangana pastoral co-operatives, and daily coastal catch from Godavari fisheries at dawn.
+          </p>
+
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex gap-3">
+              <div class="rounded-circle d-flex align-items-center justify-content-center text-white bg-charcoal flex-shrink-0" style="width: 44px; height: 44px;">
+                <i class="bi bi-shield-check text-orange"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold fs-6 mb-1">Cold Chain Integrity</h5>
+                <p class="text-muted small mb-0">Maintained at 0°C to 4°C from butchery to counter to prevent bacterial proliferation.</p>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3">
+              <div class="rounded-circle d-flex align-items-center justify-content-center text-white bg-charcoal flex-shrink-0" style="width: 44px; height: 44px;">
+                <i class="bi bi-check2-all text-orange"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold fs-6 mb-1">Clean Cuts by Master Artisans</h5>
+                <p class="text-muted small mb-0">Every piece is descaled, singed, washed in purified RO water, and portioned with surgical precision.</p>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3">
+              <div class="rounded-circle d-flex align-items-center justify-content-center text-white bg-charcoal flex-shrink-0" style="width: 44px; height: 44px;">
+                <i class="bi bi-shop text-orange"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold fs-6 mb-1">Express Counter Collection</h5>
+                <p class="text-muted small mb-0">Order through our web portal and pick up your vacuum-sealed package at the counter without waiting in lines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="fc-card p-4 p-md-5 bg-charcoal text-white shadow-lg">
+          <h3 class="heading-serif text-orange mb-3">Visit Our Hyderabad Store</h3>
+          <p class="text-white-50 mb-4">We welcome you to visit our state-of-the-art hygienic retail butcher store.</p>
+          
+          <div class="d-flex flex-column gap-3 border-top border-secondary border-opacity-50 pt-4">
+            <div class="d-flex align-items-start gap-3">
+              <i class="bi bi-geo-alt-fill text-orange fs-5"></i>
+              <div>
+                <strong class="d-block text-white">Store Address</strong>
+                <span class="text-white-50 small">{{ shop_info.address }}</span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-start gap-3">
+              <i class="bi bi-telephone-fill text-orange fs-5"></i>
+              <div>
+                <strong class="d-block text-white">Customer Support & Counter Line</strong>
+                <span class="text-white-50 small">{{ shop_info.phone }}</span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-start gap-3">
+              <i class="bi bi-envelope-fill text-orange fs-5"></i>
+              <div>
+                <strong class="d-block text-white">Inquiries & Bulk Orders</strong>
+                <span class="text-white-50 small">{{ shop_info.email }}</span>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-start gap-3">
+              <i class="bi bi-clock-fill text-orange fs-5"></i>
+              <div>
+                <strong class="d-block text-white">Shop Operating Hours</strong>
+                <span class="text-white-50 small">{{ shop_info.opening_hours }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

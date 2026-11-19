@@ -1,0 +1,284 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Products Management | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Products Management</h1>
+    <p class="text-muted mb-0">Manage items strictly within the 4 supported categories: Chicken, Mutton, Eggs, Fish.</p>
+  </div>
+  <button class="btn btn-primary-fc" data-bs-toggle="modal" data-bs-target="#addProductModal">
+    <i class="bi bi-plus-lg me-1"></i> Add New Product
+  </button>
+</div>
+
+<!-- Filters and Category Pills -->
+<div class="fc-card p-3 mb-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{{ url_for('admin.products') }}" class="btn btn-sm {% if not active_category %}btn-charcoal{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+        All Categories
+      </a>
+      {% for cat in categories %}
+      <a href="{{ url_for('admin.products', category=cat, search=search_query) }}" class="btn btn-sm {% if active_category == cat %}btn-primary-fc text-white{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+        {{ cat }}
+      </a>
+      {% endfor %}
+    </div>
+
+    <form method="GET" action="{{ url_for('admin.products') }}" class="d-flex gap-2">
+      {% if active_category %}
+        <input type="hidden" name="category" value="{{ active_category }}">
+      {% endif %}
+      <input type="text" name="search" class="form-control form-control-sm" placeholder="Search product..." value="{{ search_query or '' }}">
+      <button type="submit" class="btn btn-sm btn-charcoal">Search</button>
+    </form>
+  </div>
+</div>
+
+<!-- Products Table -->
+<div class="fc-table-wrap">
+  <table class="table fc-table mb-0">
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Unit</th>
+        <th>Selling Price</th>
+        <th>Cost Price</th>
+        <th>Stock Balance</th>
+        <th>Min Alert</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <img src="{{ p.image_url }}" alt="" class="rounded" style="width: 40px; height: 40px; object-fit: cover;" onerror="this.src='/static/images/default_product.jpg'">
+            <div>
+              <div class="fw-bold text-charcoal">{{ p.name }}</div>
+              <small class="text-muted">{{ p.description[:40] if p.description else '' }}...</small>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge bg-secondary">{{ p.category }}</span></td>
+        <td><span class="badge bg-light text-dark border">{{ p.unit }}</span></td>
+        <td class="fw-bold fs-6 text-orange">{{ p.selling_price|currency }}</td>
+        <td class="text-muted">{{ p.cost_price|currency }}</td>
+        <td class="fw-bold {% if p.stock_quantity|float <= p.min_stock_alert|float %}text-danger{% endif %}">
+          {{ p.stock_quantity|qty(p.unit) }}
+        </td>
+        <td>{{ p.min_stock_alert|qty(p.unit) }}</td>
+        <td>
+          {% if p.is_active %}
+            <span class="badge bg-success">Active</span>
+          {% else %}
+            <span class="badge bg-secondary">Inactive</span>
+          {% endif %}
+        </td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn btn-sm btn-outline-fc py-1 px-2 btn-edit-product"
+                    data-id="{{ p.id }}"
+                    data-name="{{ p.name }}"
+                    data-category="{{ p.category }}"
+                    data-unit="{{ p.unit }}"
+                    data-selling_price="{{ p.selling_price }}"
+                    data-cost_price="{{ p.cost_price }}"
+                    data-min_stock_alert="{{ p.min_stock_alert }}"
+                    data-description="{{ p.description or '' }}"
+                    data-image_url="{{ p.image_url or '' }}"
+                    data-bs-toggle="modal" data-bs-target="#editProductModal"
+                    title="Edit Product">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <form method="POST" action="{{ url_for('admin.products') }}" class="d-inline">
+              <input type="hidden" name="action" value="toggle_status">
+              <input type="hidden" name="product_id" value="{{ p.id }}">
+              <input type="hidden" name="is_active" value="{{ 'false' if p.is_active else 'true' }}">
+              <button type="submit" class="btn btn-sm {% if p.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %} py-1 px-2" title="{{ 'Deactivate' if p.is_active else 'Activate' }}">
+                <i class="bi {% if p.is_active %}bi-slash-circle{% else %}bi-check-circle{% endif %}"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content fc-card border-0">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-bold text-charcoal">Add New Fresh Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="{{ url_for('admin.products') }}">
+        <div class="modal-body p-4">
+          <input type="hidden" name="action" value="create">
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Product Name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Fresh Chicken Drumsticks" required>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Strict Category</label>
+              <select name="category" class="form-select" required>
+                <option value="Chicken Items">Chicken Items</option>
+                <option value="Mutton Items">Mutton Items</option>
+                <option value="Eggs">Eggs</option>
+                <option value="Fish Items">Fish Items</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Measurement Unit</label>
+              <select name="unit" class="form-select" required>
+                <option value="KG">Kilograms (KG)</option>
+                <option value="PCS">Pieces (PCS)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Selling Price (₹)</label>
+              <input type="number" step="0.01" min="0" name="selling_price" class="form-control" placeholder="0.00" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Cost / Purchase Price (₹)</label>
+              <input type="number" step="0.01" min="0" name="cost_price" class="form-control" placeholder="0.00" required>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Initial Stock</label>
+              <input type="number" step="0.001" min="0" name="stock_quantity" class="form-control" placeholder="0.000" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Low Stock Alert Threshold</label>
+              <input type="number" step="0.001" min="0" name="min_stock_alert" class="form-control" value="5.000" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Description</label>
+            <textarea name="description" class="form-control" rows="2" placeholder="Brief cut description, tenderness, preparation recommendation..."></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Image URL</label>
+            <input type="text" name="image_url" class="form-control" placeholder="/static/images/default_product.jpg">
+          </div>
+        </div>
+        <div class="modal-footer border-top">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-fc">Create Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content fc-card border-0">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-bold text-charcoal">Edit Product Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="{{ url_for('admin.products') }}">
+        <div class="modal-body p-4">
+          <input type="hidden" name="action" value="edit">
+          <input type="hidden" name="product_id" id="editProdId">
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Product Name</label>
+            <input type="text" name="name" id="editProdName" class="form-control" required>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Category</label>
+              <select name="category" id="editProdCategory" class="form-select" required>
+                <option value="Chicken Items">Chicken Items</option>
+                <option value="Mutton Items">Mutton Items</option>
+                <option value="Eggs">Eggs</option>
+                <option value="Fish Items">Fish Items</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Unit</label>
+              <select name="unit" id="editProdUnit" class="form-select" required>
+                <option value="KG">Kilograms (KG)</option>
+                <option value="PCS">Pieces (PCS)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Selling Price (₹)</label>
+              <input type="number" step="0.01" min="0" name="selling_price" id="editProdSellingPrice" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold">Cost Price (₹)</label>
+              <input type="number" step="0.01" min="0" name="cost_price" id="editProdCostPrice" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Low Stock Alert Threshold</label>
+            <input type="number" step="0.001" min="0" name="min_stock_alert" id="editProdMinAlert" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Description</label>
+            <textarea name="description" id="editProdDesc" class="form-control" rows="2"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Image URL</label>
+            <input type="text" name="image_url" id="editProdImg" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer border-top">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-fc">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.btn-edit-product').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('editProdId').value = btn.getAttribute('data-id');
+      document.getElementById('editProdName').value = btn.getAttribute('data-name');
+      document.getElementById('editProdCategory').value = btn.getAttribute('data-category');
+      document.getElementById('editProdUnit').value = btn.getAttribute('data-unit');
+      document.getElementById('editProdSellingPrice').value = btn.getAttribute('data-selling_price');
+      document.getElementById('editProdCostPrice').value = btn.getAttribute('data-cost_price');
+      document.getElementById('editProdMinAlert').value = btn.getAttribute('data-min_stock_alert');
+      document.getElementById('editProdDesc').value = btn.getAttribute('data-description');
+      document.getElementById('editProdImg').value = btn.getAttribute('data-image_url');
+    });
+  });
+});
+</script>
+{% endblock %}

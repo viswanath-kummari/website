@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In | Fresh Cut Meat Shop Management Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center text-center mb-5">
+    <div class="col-lg-8">
+      <span class="badge bg-orange text-white px-3 py-2 rounded-pill text-uppercase fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+        Authorized Access Portals
+      </span>
+      <h1 class="heading-serif display-5 fw-bold text-charcoal mb-3">Fresh Cut Management System</h1>
+      <p class="lead text-muted">
+        Please select your designated portal to continue. Access permissions and roles are securely verified by our backend.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+    <!-- 1. Owner / Admin Portal -->
+    <div class="col-md-6 col-lg-4">
+      <div class="fc-card h-100 p-4 d-flex flex-direction-column justify-content-between text-center position-relative border-top border-4 border-dark">
+        <div>
+          <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 bg-charcoal text-orange shadow-sm" style="width: 72px; height: 72px;">
+            <i class="bi bi-shield-lock-fill fs-2"></i>
+          </div>
+          <h3 class="fs-4 fw-bold text-charcoal mb-2">Owner / Admin</h3>
+          <p class="text-muted small mb-4">
+            Full business authority: Sales analytics, pricing control, inventory management, supplier purchases, expenses, and staff oversight.
+          </p>
+          <ul class="list-unstyled text-start small text-muted mb-4 px-3">
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Complete Financial KPI Dashboard</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Product & Price Live Overrides</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Purchases & Expense Accounts</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Audit Logs & System Settings</li>
+          </ul>
+        </div>
+        <div>
+          <a href="{{ url_for('auth.owner_login') }}" class="btn btn-charcoal w-100 py-2">
+            Owner Sign In <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Employee Counter Portal -->
+    <div class="col-md-6 col-lg-4">
+      <div class="fc-card h-100 p-4 d-flex flex-direction-column justify-content-between text-center position-relative border-top border-4" style="border-top-color: var(--fc-muted-sage) !important;">
+        <div>
+          <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 text-white shadow-sm" style="width: 72px; height: 72px; background-color: var(--fc-muted-sage);">
+            <i class="bi bi-person-badge-fill fs-2"></i>
+          </div>
+          <h3 class="fs-4 fw-bold text-charcoal mb-2">Shop Employee</h3>
+          <p class="text-muted small mb-4">
+            Shop counter operations: Quick POS customer billing by KG or piece, own sales records, stock balance checks, and order fulfillment.
+          </p>
+          <ul class="list-unstyled text-start small text-muted mb-4 px-3">
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-sage me-2"></i> Fast Touch Counter POS Billing</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-sage me-2"></i> Immediate Invoice Receipt Printing</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-sage me-2"></i> Permitted Stock Balance View</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-sage me-2"></i> Customer Pickup Fulfillment</li>
+          </ul>
+        </div>
+        <div>
+          <a href="{{ url_for('auth.employee_login') }}" class="btn btn-sage w-100 py-2">
+            Employee Sign In <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Customer Storefront Portal -->
+    <div class="col-md-6 col-lg-4">
+      <div class="fc-card h-100 p-4 d-flex flex-direction-column justify-content-between text-center position-relative border-top border-4" style="border-top-color: var(--fc-burnt-orange) !important;">
+        <div>
+          <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4 bg-orange text-white shadow-sm" style="width: 72px; height: 72px;">
+            <i class="bi bi-bag-heart-fill fs-2"></i>
+          </div>
+          <h3 class="fs-4 fw-bold text-charcoal mb-2">Customer Account</h3>
+          <p class="text-muted small mb-4">
+            Fresh meat storefront: Browse fresh chicken, mutton, eggs, and seafood. Place pickup orders and track previous purchases.
+          </p>
+          <ul class="list-unstyled text-start small text-muted mb-4 px-3">
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Browse 4 Strict Fresh Categories</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Add Custom Weights & Pieces to Cart</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Reserve Online for Shop Pickup</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-orange me-2"></i> Independent Account Registration</li>
+          </ul>
+        </div>
+        <div>
+          <div class="d-grid gap-2">
+            <a href="{{ url_for('auth.customer_login') }}" class="btn btn-primary-fc py-2">
+              Customer Sign In <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+            <a href="{{ url_for('auth.customer_register') }}" class="btn btn-outline-fc py-2">
+              New Customer? Register
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

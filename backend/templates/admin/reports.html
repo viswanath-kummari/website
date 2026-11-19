@@ -1,0 +1,144 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Reports & Business Analytics | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Reports & Business Analytics</h1>
+    <p class="text-muted mb-0">Audited business intelligence, profit & loss analysis, and multi-format exports.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('admin.export_report', type=report_type, format='csv', start_date=start_date, end_date=end_date) }}" class="btn btn-outline-fc">
+      <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV
+    </a>
+    <a href="{{ url_for('admin.export_report', type=report_type, format='excel', start_date=start_date, end_date=end_date) }}" class="btn btn-sage text-white">
+      <i class="bi bi-file-earmark-excel me-1"></i> Export Excel (.xlsx)
+    </a>
+  </div>
+</div>
+
+<!-- Report Selection Tabs -->
+<div class="fc-card p-3 mb-4">
+  <div class="d-flex flex-wrap gap-2 mb-3 pb-3 border-bottom">
+    <a href="{{ url_for('admin.reports', type='daily_sales') }}" class="btn btn-sm {% if report_type == 'daily_sales' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Daily Sales
+    </a>
+    <a href="{{ url_for('admin.reports', type='product_sales') }}" class="btn btn-sm {% if report_type == 'product_sales' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Product-wise Sales
+    </a>
+    <a href="{{ url_for('admin.reports', type='category_sales') }}" class="btn btn-sm {% if report_type == 'category_sales' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Category-wise Sales
+    </a>
+    <a href="{{ url_for('admin.reports', type='employee_sales') }}" class="btn btn-sm {% if report_type == 'employee_sales' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Employee Sales
+    </a>
+    <a href="{{ url_for('admin.reports', type='inventory') }}" class="btn btn-sm {% if report_type == 'inventory' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Inventory Valuation
+    </a>
+    <a href="{{ url_for('admin.reports', type='wastage') }}" class="btn btn-sm {% if report_type == 'wastage' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Wastage & Spoilage
+    </a>
+    <a href="{{ url_for('admin.reports', type='purchase') }}" class="btn btn-sm {% if report_type == 'purchase' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Purchases Report
+    </a>
+    <a href="{{ url_for('admin.reports', type='expense') }}" class="btn btn-sm {% if report_type == 'expense' %}btn-primary-fc{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      Operating Expenses
+    </a>
+    <a href="{{ url_for('admin.reports', type='profit_loss') }}" class="btn btn-sm {% if report_type == 'profit_loss' %}btn-charcoal{% else %}btn-outline-fc{% endif %} rounded-pill px-3">
+      <i class="bi bi-wallet2 me-1"></i> Profit & Loss Statement
+    </a>
+  </div>
+
+  <!-- Date Range Filter -->
+  {% if report_type != 'inventory' and report_type != 'profit_loss' %}
+  <form method="GET" action="{{ url_for('admin.reports') }}" class="row g-2 align-items-center">
+    <input type="hidden" name="type" value="{{ report_type }}">
+    <div class="col-md-4">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-white">From</span>
+        <input type="date" name="start_date" class="form-control" value="{{ start_date or '' }}">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-white">To</span>
+        <input type="date" name="end_date" class="form-control" value="{{ end_date or '' }}">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-charcoal btn-sm w-100">Apply Date Filter</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+
+<!-- Report Table Output -->
+<div class="fc-card p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fs-5 fw-bold text-charcoal mb-0 text-capitalize">
+      {{ report_type.replace('_', ' ') }} Summary
+    </h4>
+    <small class="text-muted">Generated from live PostgreSQL transaction ledger</small>
+  </div>
+
+  {% if report_type == 'profit_loss' %}
+    <!-- Detailed P&L Statement -->
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Accounting Item / Component</th>
+            <th class="text-end" style="width: 250px;">Amount (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in data %}
+          <tr class="{% if 'GROSS' in r.metric or 'NET' in r.metric %}table-light fw-bold fs-6{% endif %}">
+            <td class="{% if 'NET' in r.metric %}text-orange fs-5{% endif %}">{{ r.metric }}</td>
+            <td class="text-end fw-bold {% if r.amount < 0 %}text-danger{% elif 'NET' in r.metric or 'GROSS' in r.metric %}text-success fs-5{% endif %}">
+              {{ r.amount|currency }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  {% elif data %}
+    <div class="table-responsive">
+      <table class="table fc-table mb-0">
+        <thead>
+          <tr>
+            {% for key in data[0].keys() %}
+            <th class="text-capitalize">{{ key.replace('_', ' ') }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
+          <tr>
+            {% for key, val in row.items() %}
+            <td class="{% if 'price' in key or 'revenue' in key or 'total' in key or 'cost' in key or 'amount' in key or 'profit' in key %}fw-bold{% endif %}">
+              {% if 'price' in key or 'revenue' in key or 'cost' in key or 'profit' in key or 'total_amount' in key or 'valuation' in key %}
+                {{ val|currency }}
+              {% elif 'quantity' in key or 'stock' in key %}
+                {{ val }}
+              {% else %}
+                {{ val }}
+              {% endif %}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-file-earmark-x display-4 d-block mb-2"></i>
+      <p>No records available for the selected period.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

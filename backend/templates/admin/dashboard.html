@@ -1,0 +1,323 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Owner Dashboard | Fresh Cut Retail Management{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+  <div>
+    <h1 class="display-6 fw-bold heading-serif text-charcoal mb-1">Executive Shop Overview</h1>
+    <p class="text-muted mb-0">Live operations, revenue metrics, and inventory alerts from Supabase PostgreSQL.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('admin.pos') }}" class="btn btn-primary-fc">
+      <i class="bi bi-calculator me-1"></i> Quick POS Counter
+    </a>
+    <a href="{{ url_for('admin.reports') }}" class="btn btn-outline-fc">
+      <i class="bi bi-file-earmark-bar-graph me-1"></i> Full Reports
+    </a>
+  </div>
+</div>
+
+<!-- 12 Executive KPI Cards -->
+<div class="row g-3 mb-4">
+  <!-- 1. Today's Sales -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Today's Sales</small>
+        <i class="bi bi-calendar-check text-orange fs-5"></i>
+      </div>
+      <div class="kpi-value text-orange fs-4">{{ metrics.today_sales|currency }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Today's Counter Revenue</small>
+    </div>
+  </div>
+
+  <!-- 2. Today's Bills -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Today's Bills</small>
+        <i class="bi bi-receipt text-charcoal fs-5"></i>
+      </div>
+      <div class="kpi-value text-charcoal fs-4">{{ metrics.today_bills }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Invoices Cut Today</small>
+    </div>
+  </div>
+
+  <!-- 3. Total Revenue -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Total Revenue</small>
+        <i class="bi bi-cash-coin text-success fs-5"></i>
+      </div>
+      <div class="kpi-value text-charcoal fs-4">{{ metrics.total_revenue|currency }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Cumulative Sales</small>
+    </div>
+  </div>
+
+  <!-- 4. Total Expenses -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Total Expenses</small>
+        <i class="bi bi-credit-card text-danger fs-5"></i>
+      </div>
+      <div class="kpi-value text-danger fs-4">{{ metrics.total_expenses|currency }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Rent, Power, Salaries</small>
+    </div>
+  </div>
+
+  <!-- 5. Gross Profit -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Gross Profit</small>
+        <i class="bi bi-graph-up text-sage fs-5"></i>
+      </div>
+      <div class="kpi-value text-sage fs-4">{{ metrics.gross_profit|currency }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Revenue − COGS</small>
+    </div>
+  </div>
+
+  <!-- 6. Net Operating Result -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Net Operating</small>
+        <i class="bi bi-wallet2 text-charcoal fs-5"></i>
+      </div>
+      <div class="kpi-value {% if metrics.net_operating_result >= 0 %}text-success{% else %}text-danger{% endif %} fs-4">
+        {{ metrics.net_operating_result|currency }}
+      </div>
+      <small class="text-muted" style="font-size: 0.75rem;">Gross Profit − Expenses</small>
+    </div>
+  </div>
+
+  <!-- 7. Total Products -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Total Products</small>
+        <i class="bi bi-box-seam text-charcoal fs-5"></i>
+      </div>
+      <div class="kpi-value text-charcoal fs-4">{{ metrics.total_products }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Across 4 Categories</small>
+    </div>
+  </div>
+
+  <!-- 8. Available Stock -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Stock Balance</small>
+        <i class="bi bi-boxes text-sage fs-5"></i>
+      </div>
+      <div class="kpi-value text-sage fs-4">{{ metrics.available_stock }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">KG / Units on Hand</small>
+    </div>
+  </div>
+
+  <!-- 9. Low Stock Alerts -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Low Stock Alerts</small>
+        <i class="bi bi-exclamation-triangle text-danger fs-5"></i>
+      </div>
+      <div class="kpi-value text-danger fs-4">{{ metrics.low_stock_products }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Needs Restocking</small>
+    </div>
+  </div>
+
+  <!-- 10. Pending Orders -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Pending Orders</small>
+        <i class="bi bi-bag-check text-orange fs-5"></i>
+      </div>
+      <div class="kpi-value text-orange fs-4">{{ metrics.pending_online_orders }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Shop Pickups</small>
+    </div>
+  </div>
+
+  <!-- 11. Total Customers -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Customers</small>
+        <i class="bi bi-people text-charcoal fs-5"></i>
+      </div>
+      <div class="kpi-value text-charcoal fs-4">{{ metrics.total_customers }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Registered Shoppers</small>
+    </div>
+  </div>
+
+  <!-- 12. Total Employees -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="fc-kpi-card p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.68rem;">Employees</small>
+        <i class="bi bi-person-badge text-sage fs-5"></i>
+      </div>
+      <div class="kpi-value text-charcoal fs-4">{{ metrics.total_employees }}</div>
+      <small class="text-muted" style="font-size: 0.75rem;">Active Staff Accounts</small>
+    </div>
+  </div>
+</div>
+
+<!-- Business Analytics Charts Section -->
+<div class="row g-4 mb-4">
+  <!-- Chart 1: Daily Sales & Profit Trend -->
+  <div class="col-lg-8">
+    <div class="fc-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fs-5 fw-bold text-charcoal mb-0">Daily Sales & Gross Profit (Last 7 Days)</h4>
+        <span class="badge bg-light text-dark border">Real DB Analytics</span>
+      </div>
+      <div style="height: 300px;">
+        <canvas id="chartDailySales"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 2: Category Sales Distribution -->
+  <div class="col-lg-4">
+    <div class="fc-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fs-5 fw-bold text-charcoal mb-0">Category Breakdown</h4>
+        <span class="badge bg-light text-dark border">4 Categories</span>
+      </div>
+      <div style="height: 300px;">
+        <canvas id="chartCategorySales"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <!-- Chart 3: Top Selling Products -->
+  <div class="col-lg-6">
+    <div class="fc-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fs-5 fw-bold text-charcoal mb-0">Top Performing Products</h4>
+        <small class="text-muted">By Revenue Generated</small>
+      </div>
+      <div style="height: 280px;">
+        <canvas id="chartTopProducts"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 4: Expense Analysis -->
+  <div class="col-lg-6">
+    <div class="fc-card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fs-5 fw-bold text-charcoal mb-0">Expense Distribution</h4>
+        <small class="text-muted">Operating Overheads</small>
+      </div>
+      <div style="height: 280px;">
+        <canvas id="chartExpenses"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Invoices and Pending Pickup Orders Tables -->
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="fc-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fs-5 fw-bold text-charcoal mb-0">Recent Completed Invoices</h4>
+        <a href="{{ url_for('admin.sales_history') }}" class="btn btn-sm btn-outline-fc">All Sales History</a>
+      </div>
+
+      {% if recent_sales %}
+      <div class="table-responsive">
+        <table class="table align-middle small mb-0">
+          <thead>
+            <tr class="text-muted">
+              <th>Invoice #</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Payment</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in recent_sales %}
+            <tr>
+              <td class="fw-bold font-monospace text-orange">{{ s.invoice_number }}</td>
+              <td>{{ s.customer_name or 'Counter Customer' }}</td>
+              <td class="fw-bold">{{ s.grand_total|currency }}</td>
+              <td><span class="badge bg-light text-dark border">{{ s.payment_method }}</span></td>
+              <td class="text-muted">{{ s.created_at|string }}</td>
+              <td>
+                <div class="d-flex gap-1">
+                  <a href="{{ url_for('admin.print_invoice', invoice_number=s.invoice_number) }}" target="_blank" class="btn btn-sm btn-outline-fc py-0 px-2" title="Print Receipt">
+                    <i class="bi bi-printer"></i>
+                  </a>
+                  <a href="{{ url_for('admin.download_invoice_pdf', invoice_number=s.invoice_number) }}" class="btn btn-sm btn-outline-fc py-0 px-2" title="PDF">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted py-3">No sales recorded yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="fc-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fs-5 fw-bold text-charcoal mb-0">Pending Pickup Orders</h4>
+        <a href="{{ url_for('admin.online_orders') }}" class="btn btn-sm btn-outline-fc">Manage Orders</a>
+      </div>
+
+      {% if pending_orders %}
+      <div class="d-flex flex-column gap-2">
+        {% for ord in pending_orders %}
+        <div class="p-3 rounded border bg-light">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-bold font-monospace text-orange">{{ ord.order_number }}</span>
+            <span class="badge-status status-pending" style="font-size: 0.7rem;">Pending</span>
+          </div>
+          <div class="fw-bold text-charcoal">{{ ord.customer_name }} • {{ ord.customer_phone }}</div>
+          <div class="small text-muted mb-2">Collection: {{ ord.pickup_time }}</div>
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+            <span class="fw-bold">{{ ord.grand_total|currency }}</span>
+            <form method="POST" action="{{ url_for('admin.update_order', order_id=ord.id) }}">
+              <input type="hidden" name="status" value="Accepted">
+              <button type="submit" class="btn btn-sm btn-sage py-1 px-2">Accept Order</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-4 text-muted small">
+        <i class="bi bi-check2-circle fs-3 text-success d-block mb-1"></i>
+        No pending pickup orders currently.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const chartDatasets = {{ charts|tojson|safe }};
+  document.addEventListener('DOMContentLoaded', () => {
+    initDashboardCharts(chartDatasets);
+  });
+</script>
+{% endblock %}

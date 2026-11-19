@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Registration | Fresh Cut Meat Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6 col-xl-5">
+      <div class="fc-card p-4 p-md-5 border-top border-4" style="border-top-color: var(--fc-burnt-orange) !important;">
+        <div class="text-center mb-4">
+          <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 bg-orange text-white shadow-sm" style="width: 64px; height: 64px;">
+            <i class="bi bi-person-plus-fill fs-2"></i>
+          </div>
+          <h2 class="fs-4 fw-bold text-charcoal mb-1">Create Customer Account</h2>
+          <p class="text-muted small">Register to order fresh meat and schedule express shop pickup</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.customer_register') }}">
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-charcoal">Full Name</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+              <input type="text" name="name" class="form-control border-start-0" placeholder="e.g. Ramesh Kumar" required autofocus>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-charcoal">Phone Number</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-telephone text-muted"></i></span>
+              <input type="tel" name="phone" class="form-control border-start-0" placeholder="e.g. +91 98765 43210" required>
+            </div>
+            <small class="text-muted" style="font-size: 0.75rem;">Used for order collection confirmation at counter</small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-charcoal">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+              <input type="email" name="email" class="form-control border-start-0" placeholder="name@example.com" required>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-4">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-charcoal">Password</label>
+              <input type="password" name="password" class="form-control" placeholder="Min. 6 chars" minlength="6" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-charcoal">Confirm Password</label>
+              <input type="password" name="confirm_password" class="form-control" placeholder="Re-type password" minlength="6" required>
+            </div>
+          </div>
+
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary-fc py-2 fw-bold">
+              Register & Start Shopping <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+
+          <div class="text-center border-top pt-3">
+            <small class="text-muted">Already have a customer account? 
+              <a href="{{ url_for('auth.customer_login') }}" class="text-orange fw-bold text-decoration-none">Sign In</a>
+            </small>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

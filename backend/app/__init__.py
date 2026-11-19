@@ -84,3 +84,4 @@ def create_app(config_class=Config):
         return render_template('403.html'), 403
 
     return app
+

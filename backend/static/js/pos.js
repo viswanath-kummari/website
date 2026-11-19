@@ -405,3 +405,4 @@ class POSBillingSystem {
     bsModal.show();
   }
 }
+

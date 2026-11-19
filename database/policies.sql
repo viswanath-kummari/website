@@ -128,3 +128,4 @@ DROP POLICY IF EXISTS "Only admin can modify shop settings" ON public.settings;
 CREATE POLICY "Only admin can modify shop settings"
 ON public.settings FOR ALL
 USING (public.is_admin());
+

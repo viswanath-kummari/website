@@ -47,3 +47,4 @@ def test_shop_settings_api():
     data = json.loads(resp.data)
     assert data['success'] is True
     assert 'shop_name' in data['data']
+

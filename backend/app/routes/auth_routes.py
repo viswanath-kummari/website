@@ -90,6 +90,51 @@ def customer_register():
         flash(message, "danger")
     return render_template('auth/customer_register.html')
 
+@auth_bp.route('/switch/<role>')
+def quick_switch_role(role):
+    """
+    All-in-One Instant Role Switcher.
+    Allows 1-click switching between Owner, Employee, and Customer experiences from a single URL.
+    """
+    session.clear()
+    role = role.lower()
+    
+    if role in ['admin', 'owner']:
+        success, msg, user = authenticate('owner@freshcut.com', 'Owner@123', intended_role='admin')
+        if success and user:
+            session['user_id'] = user['id']
+            session['user_role'] = 'admin'
+            session['user_name'] = user['full_name']
+            flash(f"Switched to Owner Mode (Logged in as {user['full_name']})", "success")
+            return redirect(url_for('admin.dashboard'))
+        else:
+            flash(f"Could not switch to Owner: {msg}", "danger")
+            return redirect(url_for('auth.login_landing'))
+        
+    elif role in ['employee', 'staff']:
+        success, msg, user = authenticate('employee@freshcut.com', 'Employee@123', intended_role='employee')
+        if success and user:
+            session['user_id'] = user['id']
+            session['user_role'] = 'employee'
+            session['user_name'] = user['full_name']
+            flash(f"Switched to Employee Counter POS (Logged in as {user['full_name']})", "info")
+            return redirect(url_for('employee.pos_billing'))
+        else:
+            flash(f"Could not switch to Employee: {msg}", "danger")
+            return redirect(url_for('auth.login_landing'))
+        
+    else:  # customer
+        success, msg, user = authenticate('customer@freshcut.com', 'Customer@123', intended_role='customer')
+        if success and user:
+            session['user_id'] = user['id']
+            session['user_role'] = 'customer'
+            session['user_name'] = user['full_name']
+            flash(f"Switched to Customer Storefront (Logged in as {user['full_name']})", "success")
+            return redirect(url_for('customer.home'))
+        else:
+            flash(f"Could not switch to Customer: {msg}", "danger")
+            return redirect(url_for('customer.home'))
+
 @auth_bp.route('/logout')
 def logout():
     """Clears session and redirects to authentication landing."""
@@ -119,3 +164,4 @@ def api_register():
     if not success:
         return jsonify({'success': False, 'message': message}), 400
     return jsonify({'success': True, 'message': message, 'data': user})
+

@@ -58,3 +58,4 @@ def get_customer_details(customer_id: str):
     customer['sales'] = sales
     customer['orders'] = orders
     return customer
+

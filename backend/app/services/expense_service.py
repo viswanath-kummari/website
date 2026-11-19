@@ -117,3 +117,4 @@ def get_payments_list(payment_type: str = None, limit: int = 100):
         LIMIT {limit};
     """
     return query_all(sql, params)
+

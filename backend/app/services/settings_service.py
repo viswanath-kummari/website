@@ -75,3 +75,4 @@ def get_audit_logs(limit: int = 100):
         LIMIT %s;
     """
     return query_all(sql, (limit,))
+

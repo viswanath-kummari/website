@@ -16,6 +16,32 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
+  <!-- ALL-IN-ONE MASTER PORTAL SWITCHER BAR -->
+  <div class="py-2 px-3 bg-charcoal border-bottom border-secondary border-opacity-25" style="font-size: 0.85rem;">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-orange text-white px-2 py-1"><i class="bi bi-link-45deg"></i> ALL-IN-ONE HUB</span>
+        <span class="text-white-50 d-none d-md-inline">Direct Role Switcher:</span>
+      </div>
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <a href="{{ url_for('auth.quick_switch_role', role='owner') }}" class="btn btn-sm {% if current_user and current_user.role == 'admin' %}btn-primary-fc{% else %}btn-outline-light{% endif %} py-1 px-2" style="font-size: 0.78rem;">
+          <i class="bi bi-shield-lock-fill text-orange me-1"></i> 👑 Owner Mode (18 Sections)
+        </a>
+        <a href="{{ url_for('auth.quick_switch_role', role='employee') }}" class="btn btn-sm {% if current_user and current_user.role == 'employee' %}btn-sage text-white{% else %}btn-outline-light{% endif %} py-1 px-2" style="font-size: 0.78rem;">
+          <i class="bi bi-calculator-fill text-sage me-1"></i> 💼 Employee Counter POS
+        </a>
+        <a href="{{ url_for('auth.quick_switch_role', role='customer') }}" class="btn btn-sm {% if current_user and current_user.role == 'customer' %}btn-light text-dark fw-bold{% else %}btn-outline-light{% endif %} py-1 px-2" style="font-size: 0.78rem;">
+          <i class="bi bi-bag-heart-fill me-1"></i> 🛒 Customer Storefront
+        </a>
+        {% if current_user %}
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.78rem;" title="Sign Out">
+          <i class="bi bi-box-arrow-right"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
   <!-- Top Announcement Bar -->
   <div class="py-1 px-3 text-center text-white" style="background-color: var(--fc-charcoal-light); font-size: 0.8rem; letter-spacing: 0.02em;">
     <span class="me-3"><i class="bi bi-clock me-1 text-orange"></i> {{ shop_info.opening_hours or 'Mon - Sun: 7:00 AM - 9:00 PM' }}</span>
@@ -200,3 +226,4 @@
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>
+

@@ -54,6 +54,133 @@
   </div>
 </section>
 
+<!-- ALL-IN-ONE MASTER OPERATIONS & EXPERIENCE LAUNCHPAD -->
+<section class="py-5" style="background-color: #1a1e1b; color: #ffffff; border-bottom: 2px solid rgba(217, 119, 69, 0.3);">
+  <div class="container">
+    <div class="row align-items-center mb-4">
+      <div class="col-lg-8">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2" style="background: rgba(217, 119, 69, 0.2); border: 1px solid var(--fc-burnt-orange); color: var(--fc-burnt-orange); font-size: 0.8rem; font-weight: 700;">
+          <i class="bi bi-stars"></i> UNIFIED PLATFORM HUB
+        </div>
+        <h2 class="display-6 fw-bold heading-serif text-white mb-1">All-in-One Fresh Cut Portal</h2>
+        <p class="text-white-50 mb-0">Single unified entrance for Store Management, Counter Billing POS, and Customer Meat Ordering.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <span class="badge bg-sage text-white px-3 py-2 fs-6 shadow-sm">
+          <i class="bi bi-database-check me-1"></i> Supabase PostgreSQL Connected
+        </span>
+      </div>
+    </div>
+
+    <!-- 3 Core Role Portals Deck -->
+    <div class="row g-4 mb-4">
+      <!-- 1. Owner / Admin Suite -->
+      <div class="col-lg-4">
+        <div class="fc-card p-4 h-100 d-flex flex-column" style="background: rgba(32, 37, 34, 0.95); border: 1px solid rgba(217, 119, 69, 0.35); border-top: 4px solid var(--fc-burnt-orange) !important;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 52px; height: 52px; background: rgba(217, 119, 69, 0.2); color: var(--fc-burnt-orange);">
+              <i class="bi bi-shield-lock-fill fs-3"></i>
+            </div>
+            <span class="badge bg-orange text-white px-2 py-1 small">18 Management Modules</span>
+          </div>
+          <h3 class="h5 fw-bold text-white mb-2">1. Owner / Admin Console</h3>
+          <p class="text-white-50 small mb-4 flex-grow-1">
+            Complete executive oversight: Today's sales, gross profit, inventory status, price adjustments, supplier purchases, expense logs, staff accounts, PDF/Excel export, and shop settings.
+          </p>
+          <div class="mb-3 p-2 rounded bg-black bg-opacity-40 border border-secondary border-opacity-25 small text-white-50">
+            <span class="text-orange fw-semibold">Quick Access:</span>
+            <a href="{{ url_for('admin.pos') }}" class="text-white text-decoration-none ms-1 me-2 hover-orange">Admin POS</a> •
+            <a href="{{ url_for('admin.inventory') }}" class="text-white text-decoration-none mx-2 hover-orange">Stock</a> •
+            <a href="{{ url_for('admin.prices') }}" class="text-white text-decoration-none mx-2 hover-orange">Prices</a> •
+            <a href="{{ url_for('admin.reports') }}" class="text-white text-decoration-none ms-2 hover-orange">Reports</a>
+          </div>
+          <a href="{{ url_for('auth.quick_switch_role', role='owner') }}" class="btn btn-primary-fc w-100 py-2 fw-semibold">
+            <i class="bi bi-speedometer2 me-2"></i> Launch Owner Mode
+          </a>
+        </div>
+      </div>
+
+      <!-- 2. Employee Counter POS -->
+      <div class="col-lg-4">
+        <div class="fc-card p-4 h-100 d-flex flex-column" style="background: rgba(32, 37, 34, 0.95); border: 1px solid rgba(129, 145, 123, 0.4); border-top: 4px solid var(--fc-muted-sage) !important;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 52px; height: 52px; background: rgba(129, 145, 123, 0.2); color: var(--fc-muted-sage);">
+              <i class="bi bi-calculator-fill fs-3"></i>
+            </div>
+            <span class="badge bg-sage text-white px-2 py-1 small">Touchscreen Counter POS</span>
+          </div>
+          <h3 class="h5 fw-bold text-white mb-2">2. Employee Billing Terminal</h3>
+          <p class="text-white-50 small mb-4 flex-grow-1">
+            Rapid in-store checkout terminal: quick weight/pieces entry, live stock validation, cash/UPI/card tender, instant thermal receipt formatting, and pickup order fulfillment.
+          </p>
+          <div class="mb-3 p-2 rounded bg-black bg-opacity-40 border border-secondary border-opacity-25 small text-white-50">
+            <span class="text-sage fw-semibold">Staff Features:</span>
+            <span class="text-white ms-1 me-2">Quick KG/PCS</span> •
+            <span class="text-white mx-2">Thermal Print</span> •
+            <span class="text-white ms-2">Stock Alert</span>
+          </div>
+          <a href="{{ url_for('auth.quick_switch_role', role='employee') }}" class="btn btn-sage text-white w-100 py-2 fw-semibold">
+            <i class="bi bi-calculator me-2"></i> Launch Counter POS Terminal
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Customer Digital Storefront -->
+      <div class="col-lg-4">
+        <div class="fc-card p-4 h-100 d-flex flex-column" style="background: rgba(32, 37, 34, 0.95); border: 1px solid rgba(255, 255, 255, 0.15); border-top: 4px solid #ffffff !important;">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 52px; height: 52px; background: rgba(255, 255, 255, 0.1); color: #ffffff;">
+              <i class="bi bi-bag-heart-fill fs-3"></i>
+            </div>
+            <span class="badge bg-light text-dark px-2 py-1 small">Online Meat Shop</span>
+          </div>
+          <h3 class="h5 fw-bold text-white mb-2">3. Customer Storefront</h3>
+          <p class="text-white-50 small mb-4 flex-grow-1">
+            Clean retail ordering experience: 4 strict categories (Chicken, Mutton, Eggs, Fish), customizable weight selections, cart calculations, and convenient shop counter collection.
+          </p>
+          <div class="mb-3 p-2 rounded bg-black bg-opacity-40 border border-secondary border-opacity-25 small text-white-50">
+            <span class="text-white fw-semibold">Cuts:</span>
+            <a href="{{ url_for('customer.product_catalog', category='Chicken Items') }}" class="text-white-50 text-decoration-none ms-1 me-2 hover-orange">Chicken</a> •
+            <a href="{{ url_for('customer.product_catalog', category='Mutton Items') }}" class="text-white-50 text-decoration-none mx-2 hover-orange">Mutton</a> •
+            <a href="{{ url_for('customer.product_catalog', category='Eggs') }}" class="text-white-50 text-decoration-none mx-2 hover-orange">Eggs</a> •
+            <a href="{{ url_for('customer.product_catalog', category='Fish Items') }}" class="text-white-50 text-decoration-none ms-2 hover-orange">Fish</a>
+          </div>
+          <a href="{{ url_for('customer.product_catalog') }}" class="btn btn-outline-light w-100 py-2 fw-semibold">
+            <i class="bi bi-cart3 me-2"></i> Browse Customer Storefront
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick 1-Click Role Switch Bar with Preloaded Accounts -->
+    <div class="p-3 rounded-3" style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.1);">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-lightning-charge-fill text-orange fs-5"></i>
+          <div>
+            <div class="fw-bold text-white small">Instant 1-Click Role Switcher (No Password Typing Needed):</div>
+            <div class="text-white-50 small" style="font-size: 0.75rem;">Switch seamlessly between Owner, Billing Counter, and Customer accounts directly from this single URL.</div>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <a href="{{ url_for('auth.quick_switch_role', role='owner') }}" class="btn btn-sm btn-outline-warning py-1 px-3" style="font-size: 0.8rem;">
+            <i class="bi bi-key-fill me-1"></i> Switch to <strong>Owner</strong> (owner@freshcut.com)
+          </a>
+          <a href="{{ url_for('auth.quick_switch_role', role='employee') }}" class="btn btn-sm btn-outline-info py-1 px-3" style="font-size: 0.8rem;">
+            <i class="bi bi-person-badge me-1"></i> Switch to <strong>Employee</strong> (employee@freshcut.com)
+          </a>
+          <a href="{{ url_for('auth.quick_switch_role', role='customer') }}" class="btn btn-sm btn-outline-success py-1 px-3" style="font-size: 0.8rem;">
+            <i class="bi bi-person me-1"></i> Switch to <strong>Customer</strong> (customer@freshcut.com)
+          </a>
+          <a href="{{ url_for('auth.login_landing') }}" class="btn btn-sm btn-outline-light py-1 px-2" style="font-size: 0.8rem;" title="View Standard Login Landing">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Standard Login Page
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- 4 Strict Product Categories Section -->
 <section id="categorySection" class="py-5" style="background-color: var(--fc-warm-ivory);">
   <div class="container py-2">
@@ -280,3 +407,4 @@
   </div>
 </section>
 {% endblock %}
+

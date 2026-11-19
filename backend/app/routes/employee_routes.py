@@ -117,3 +117,4 @@ def profile():
 
     settings = get_shop_settings()
     return render_template('employee/profile.html', user=user, settings=settings)
+

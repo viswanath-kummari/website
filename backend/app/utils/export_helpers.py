@@ -163,3 +163,4 @@ def generate_invoice_pdf(sale_data: dict) -> bytes:
 
     doc.build(story)
     return buffer.getvalue()
+

@@ -325,3 +325,4 @@ def get_report_data(report_type: str, start_date: str = None, end_date: str = No
         ]
 
     return []
+

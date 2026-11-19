@@ -172,3 +172,4 @@ def update_user_profile(user_id: str, full_name: str, phone: str) -> tuple[bool,
         (full_name.strip(), phone.strip(), user_id)
     )
     return True, "Profile updated successfully."
+

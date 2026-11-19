@@ -154,3 +154,4 @@ function initDashboardCharts(chartData) {
     });
   }
 }
+

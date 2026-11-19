@@ -133,3 +133,4 @@ def api_shop_settings():
     """Returns public shop info."""
     settings = get_shop_settings()
     return jsonify({'success': True, 'data': settings})
+

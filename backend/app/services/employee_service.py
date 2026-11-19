@@ -128,3 +128,4 @@ def get_employee_sales_summary(profile_id: str):
         'stats': stats or {},
         'recent_bills': recent_bills or []
     }
+

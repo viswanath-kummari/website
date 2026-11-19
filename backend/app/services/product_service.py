@@ -208,3 +208,4 @@ def toggle_product_status(product_id: str, is_active: bool) -> tuple[bool, str]:
     )
     status_str = "activated" if is_active else "deactivated"
     return True, f"Product successfully {status_str}."
+

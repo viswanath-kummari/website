@@ -431,3 +431,4 @@ def download_invoice_pdf(invoice_number):
         as_attachment=True,
         download_name=f"{invoice_number}.pdf"
     )
+

@@ -53,3 +53,4 @@ def test_pos_overselling_prevention():
     success, msg, sale = create_sale_bill(oversell_payload)
     assert success is False
     assert "Insufficient stock" in msg
+

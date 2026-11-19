@@ -135,3 +135,4 @@ def my_profile():
 
     settings = get_shop_settings()
     return render_template('customer/profile.html', user=user, settings=settings)
+

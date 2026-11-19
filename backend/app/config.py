@@ -1,18 +1,24 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env file
-load_dotenv()
+# Load root project .env.local
+ROOT_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(ROOT_DIR / ".env.local")
 
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY', 'freshcut-retail-secret-key-prod-2026-secure-jwt')
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY:
+        if os.getenv('VERCEL'):
+            raise RuntimeError('SECRET_KEY environment variable is required')
+        SECRET_KEY = 'freshcut-local-development-secret-key'
     
     # Database
-    DB_HOST = os.getenv('DB_HOST', 'aws-0-ap-south-1.pooler.supabase.com')
-    DB_PORT = int(os.getenv('DB_PORT', 5432))
-    DB_NAME = os.getenv('DB_NAME', 'postgres')
-    DB_USER = os.getenv('DB_USER', 'postgres.fkcvsjxdbkghtghpdmwo')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', 'Viswanath@321')
+    DB_HOST = os.getenv('DB_HOST')
+    DB_PORT = int(os.getenv('DB_PORT', '5432'))
+    DB_NAME = os.getenv('DB_NAME')
+    DB_USER = os.getenv('DB_USER')
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
     DATABASE_URL = os.getenv('DATABASE_URL')
     
     # Supabase API (Optional)
@@ -21,7 +27,7 @@ class Config:
     
     # Session & Security
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SECURE = False  # Set to True in HTTPS production
+    SESSION_COOKIE_SECURE = bool(os.getenv('VERCEL'))
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = 86400 * 7  # 7 days
     
